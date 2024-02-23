@@ -163,5 +163,5 @@ nav:
     - Redhat offline package: linux/Redhat-offline-package.md
   
   - CICD:
-    - Jenkins Pipeline: cicd/Jenkins-Pipeline.md
-    - Gitlab Pipeline: cicd/Gitlab-Pipeline.md
+    - Jenkins: cicd/Jenkins-Pipeline.md
+    - Gitlab: cicd/Gitlab-Pipeline.md
