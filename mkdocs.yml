@@ -153,6 +153,7 @@ nav:
     - RPM: linux/RPM.md
     - NFS: linux/NFS.md
     - Vim: linux/Vim.md
+    - Yum: linux/Yum.md
     - Deepin: linux/Deepin.md
     - Kylin: linux/Kylin.md
     - Debian: linux/Debian.md
