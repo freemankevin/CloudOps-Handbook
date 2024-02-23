@@ -1,0 +1,272 @@
+
+
+
+
+
+
+> 因为Deepin 是基于debian 系列做分支开发的，所以使用命令也是与debian 类似。
+
+## 创建普通用户
+
+这个是在安装系统时，由安装人员指定的，如果后期使用过程中发现用户与我们后面文档中所需要 `deepin`的不一致，请自己手动新建个用户。
+
+```shell 
+# 创建用户
+# 这里 `-m` 选项告诉 `useradd` 为新用户创建一个家目录。
+sudo useradd -m deepin
+
+# 设置密码
+# 将 `deepin` 替换为新用户名，将 `password` 替换为你想要的密码
+echo 'deepin:password' | sudo chpasswd
+
+
+# 或者
+sudo useradd -m deepin && echo 'deepin:password' | sudo chpasswd
+
+```
+
+
+
+
+
+## 修改root密码
+
+```shell
+# 默认root 没有密码，需要自己指定个
+sudo passwd root
+```
+
+## sudo 免密码
+
+```shell
+# 切到root
+$ su -
+# 修改权限
+$ chmod 740 /etc/sudoers
+$ vi /etc/sudoers
+#%sudo  ALL=(ALL:ALL) ALL # 将原有这行注释了，改成下面这种
+%sudo   ALL=(ALL:ALL) NOPASSWD:ALL
+# 权限改回去
+$ chmod 0440 /etc/sudoers 
+```
+
+## 修改端口范围
+
+```shell
+[root@localhost ~]# cat /proc/sys/net/ipv4/ip_local_port_range
+32768   61000
+[root@localhost ~]# echo 1024 65535 > /proc/sys/net/ipv4/ip_local_port_range
+```
+
+
+
+## 离线安装常用工具
+
+> :warning: **离线包安装局限性：只能用于相同环境下的操作系统。**比如操作系统版本（包括小版本），操作系统安装方式等等。因为安装时可以选择多种方式安装，不同方式导致的环境不同会影响最后制作离线包时个数与种类不同。
+
+
+
+```shell
+## 这里是在能联互联网的机器上面执行,建议在root 账号下操作
+##################################################### 制作离线包 #####################################################
+# 先使用默认的镜像源
+apt update 
+
+# 下载 openssh-server 软件包
+# 这个命令会将 `openssh-server` 及其所有未安装的依赖项下载到 `/var/cache/apt/archives/` 目录。
+apt install -y  --download-only openssh-server vim ansible htop tree net-tools lsof lrzsz curl ebtables conntrack socat wget telnet chrony rsync tcpdump htop xfsprogs chkconfig
+# 查看本地目录下文件
+root@deepin-1:~# ls -lh /var/cache/apt/archives/*.deb
+-rw-r--r-- 1 root root 1.6M Apr 13  2017 /var/cache/apt/archives/ansible_2.2.1.0-2_all.deb
+-rw-r--r-- 1 root root 210K Aug  7  2017 /var/cache/apt/archives/chrony_3.0-4+deb9u1_amd64.deb
+-rw-r--r-- 1 root root  33K Feb 16  2017 /var/cache/apt/archives/conntrack_1%3a1.4.4+snapshot20161117-5_amd64.deb
+-rw-r--r-- 1 root root 223K Nov  2  2018 /var/cache/apt/archives/curl_7.52.1-5+deb9u8_amd64.deb
+-rw-r--r-- 1 root root  84K Mar  4  2017 /var/cache/apt/archives/ebtables_2.0.10.4-3.5+b1_amd64.deb
+-rw-r--r-- 1 root root  87K Jul 26  2016 /var/cache/apt/archives/htop_2.0.2-1_amd64.deb
+-rw-r--r-- 1 root root 930K Jun 13  2016 /var/cache/apt/archives/ieee-data_20160613.1_all.deb
+-rw-r--r-- 1 root root 285K Nov  2  2018 /var/cache/apt/archives/libcurl3_7.52.1-5+deb9u8_amd64.deb
+-rw-r--r-- 1 root root  47K Oct  1  2016 /var/cache/apt/archives/libyaml-0-2_0.1.7-2_amd64.deb
+-rw-r--r-- 1 root root 306K Sep 16  2015 /var/cache/apt/archives/lsof_4.89+dfsg-0.1_amd64.deb
+-rw-r--r-- 1 root root 459K Feb 15  2018 /var/cache/apt/archives/ncurses-term_6.0+20161126-1+deb9u2_all.deb
+-rw-r--r-- 1 root root 325K Aug 22  2018 /var/cache/apt/archives/openssh-server_1%3a7.4p1-10+deb9u4_amd64.deb
+-rw-r--r-- 1 root root  39K Aug 22  2018 /var/cache/apt/archives/openssh-sftp-server_1%3a7.4p1-10+deb9u4_amd64.deb
+-rw-r--r-- 1 root root  68K Dec 31  2016 /var/cache/apt/archives/python-cffi-backend_1.9.1-2_amd64.deb
+-rw-r--r-- 1 root root 206K May 28  2017 /var/cache/apt/archives/python-cryptography_1.7.1-3_amd64.deb
+-rw-r--r-- 1 root root  35K Jul 13  2016 /var/cache/apt/archives/python-enum34_1.1.6-1_all.deb
+-rw-r--r-- 1 root root  39K Nov 10  2016 /var/cache/apt/archives/python-httplib2_0.9.2+dfsg-1_all.deb
+-rw-r--r-- 1 root root  32K Dec 26  2016 /var/cache/apt/archives/python-idna_2.2-1_all.deb
+-rw-r--r-- 1 root root  18K Nov  1  2016 /var/cache/apt/archives/python-ipaddress_1.0.17-1_all.deb
+-rw-r--r-- 1 root root 109K Aug  1  2015 /var/cache/apt/archives/python-jinja2_2.8-1_all.deb
+-rw-r--r-- 1 root root  22K Mar  2  2016 /var/cache/apt/archives/python-kerberos_1.1.5-2+b2_amd64.deb
+-rw-r--r-- 1 root root  15K Nov  7  2016 /var/cache/apt/archives/python-markupsafe_0.23-3_amd64.deb
+-rw-r--r-- 1 root root 222K Sep 10  2016 /var/cache/apt/archives/python-netaddr_0.7.18-2_all.deb
+-rw-r--r-- 1 root root 109K Jun  9  2016 /var/cache/apt/archives/python-paramiko_2.0.0-1_all.deb
+-rw-r--r-- 1 root root  51K Sep 12  2016 /var/cache/apt/archives/python-pyasn1_0.1.9-2_all.deb
+-rw-r--r-- 1 root root 168K Sep 24  2017 /var/cache/apt/archives/python-selinux_2.6-3+b3_amd64.deb
+-rw-r--r-- 1 root root 291K Jan 20  2017 /var/cache/apt/archives/python-setuptools_33.1.1-1_all.deb
+-rw-r--r-- 1 root root  12K Sep 19  2016 /var/cache/apt/archives/python-xmltodict_0.10.2-1_all.deb
+-rw-r--r-- 1 root root 116K Sep  4  2016 /var/cache/apt/archives/python-yaml_3.12-1_amd64.deb
+-rw-r--r-- 1 root root 405K Sep 13  2017 /var/cache/apt/archives/tcpdump_4.9.2-1~deb9u1_amd64.deb
+-rw-r--r-- 1 root root  71K Nov 10  2016 /var/cache/apt/archives/telnet_0.17-41_amd64.deb
+-rw-r--r-- 1 root root  46K Jan  5  2017 /var/cache/apt/archives/tree_1.7.0-5_amd64.deb
+
+##################################################### 制作本地源 #################################################
+# 先在本地测试
+# 注释原有默认源
+root@deepin-1:~# vi /etc/apt/sources.list
+root@deepin-1:~# cat /etc/apt/sources.list
+## Generated by deepin-installer
+#deb [by-hash=force] http://packages.deepin.com/deepin lion main contrib non-free  # 这里
+#deb-src http://packages.deepin.com/deepin lion main contrib non-free
+
+# 新建目录
+mkdir -p /home/deepin/debs
+# 拷贝文件
+cp -rvf /var/cache/apt/archives/*.deb /home/deepin/debs
+# 生成本地源的索引文件
+cd /home/deepin/debs
+dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
+
+# 添加本地源
+root@deepin-1:~# sudo sh -c 'echo "deb [trusted=yes] file:/home/deepin/debs ./" >> /etc/apt/sources.list'
+root@deepin-1:~# cat /etc/apt/sources.list
+## Generated by deepin-installer
+#deb [by-hash=force] http://packages.deepin.com/deepin lion main contrib non-free
+#deb-src http://packages.deepin.com/deepin lion main contrib non-free
+deb [trusted=yes] file:/home/deepin/debs ./
+
+# 修改目录权限
+chown -R deepin.deepin /home/deepin/debs
+
+# 切换到普通用户
+su - deepin
+# 刷新仓库
+apt update 
+# 本地测试离线安装包
+sudo apt install -y openssh-server vim ansible htop tree net-tools lsof lrzsz curl ebtables conntrack socat wget telnet chrony rsync tcpdump htop xfsprogs chkconfig
+
+##################################################### 其他机器复用 #################################################
+# 复制下载的 .deb 文件
+# 您可以将所有下载的 .deb 文件复制到一个 USB 驱动器或其他移动存储设备中。
+cp /home/deepin/debs/*.deb /path/to/your/usb-drive
+
+# 类似的，到新的机器上面执行相同的制作本地源的步骤
+```
+
+## 静态IP配置
+
+> 可参考博客：
+>
+> https://blog.csdn.net/zhuohui307317684/article/details/124882901
+>
+> https://www.cnblogs.com/javayanglei/p/13305285.html
+
+```shell
+# 修改配置
+root@deepin-1:~# sudo vim /etc/network/interfaces
+root@deepin-1:~# cat /etc/network/interfaces
+# interfaces(5) file used by ifup(8) and ifdown(8)
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+auto ens33 # 这里往下
+iface ens33 inet static
+    address 192.168.171.153
+    netmask 255.255.255.0
+    gateway 192.168.171.2
+
+# 重启网络
+sudo systemctl restart networking
+
+# 建议重启机器
+sync;reboot
+```
+
+
+
+> :warning:  **注意不同debian 版本的写法不同，以v10 分界。**
+
+```shell
+###################################### 旧版本写法
+auto eth0
+iface eth0 inet static
+    address 192.168.1.100
+    netmask 255.255.255.0
+    gateway 192.168.1.1
+
+
+###################################### 新版本写法
+[Match]
+Name=eth0
+
+[Network]
+Address=192.168.1.100/24
+Gateway=192.168.1.1
+DNS=192.168.1.1
+```
+
+
+
+## 启用root用户
+
+> :warning: **如果项目上没有特殊要求，默认都是使用ROOT 用户操作的。**
+>
+> 普通用户也可用，但对于数据库类型的中间件或者本身就是数据库，建议使用ROOT 或者对数据库配置做相应处理，否则可能会出现异常。
+
+```shell
+#  root远程登录
+$ sudo vi /etc/ssh/sshd_config
+PermitRootLogin  yes
+
+$ sudo  systemctl  restart  ssh
+```
+
+
+
+## 刷新root 环境变量
+
+```shell
+sed -i '/^# export LS_OPTIONS/s/^# //' ~/.bashrc
+sed -i '/^# eval "\$(dircolors)"/s/^# //' ~/.bashrc
+sed -i '/^# alias ls=/s/^# //' ~/.bashrc
+sed -i '/^# alias ll=/s/^# //' ~/.bashrc
+sed -i '/^# alias l=/s/^# //' ~/.bashrc
+source ~/.bashrc
+```
+
+
+
+## 处理Vim 自动Tab
+
+> :warning: **非必须，只是有些时候需要复制粘贴文本时系统自动tab 造成很多麻烦，这里选择关闭。**
+
+``` shell
+# 创建这样一个文件即可。
+root@deepin-1:~# vim ~/.vimrc 
+root@deepin-1:~# cat ~/.vimrc
+syntax on
+set noautoindent
+set nosmartindent
+set nocindent
+filetype indent off
+```
+
+
+
+## 查看系统版本
+
+```shell
+root@deepin-1:~# lsb_release -cs
+stable
+root@deepin-1:~# cat /etc/os-release
+PRETTY_NAME="Deepin 15"
+NAME="Deepin"
+VERSION_ID="15.11"
+VERSION="15.11"
+ID=deepin
+HOME_URL="https://www.deepin.org/"
+BUG_REPORT_URL="http://feedback.deepin.org/feedback/"
+root@deepin-1:~# cat /etc/debian_version
+9.0
+```
+

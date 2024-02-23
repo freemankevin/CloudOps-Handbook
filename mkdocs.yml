@@ -1,0 +1,166 @@
+
+# Project information
+site_name: CloudOps Handbook
+site_url: https://github.com/freemankevin/cloudops-handbook
+site_author: Freeman Kevin
+site_description: >-
+  Compile cloud native operation and maintenance related operation 
+  and maintenance experience documents
+
+# Configuration
+theme:
+  name: material
+  custom_dir: material/overrides
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.prune
+    - navigation.sections
+    - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    # - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/link
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off
+        name: Switch to system preference
+  font:
+    text: Roboto
+    code: Roboto Mono
+  favicon: assets/favicon.png
+  icon:
+    logo: logo
+
+repo_url: 'https://github.com/freemankevin/CloudOps-Handbook'
+repo_name: 'GitHub'
+
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+  - git-authors
+  - git-revision-date-localized:
+      type: date
+      enable_creation_date: true
+  - mermaid2
+markdown_extensions:
+  - admonition
+  - codehilite
+  - toc:
+      permalink: true
+
+copyright: Copyright &copy; 2020 - 2024 Freeman Kevin
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/freemankevin
+    - icon: fontawesome/brands/mastodon
+      link: https://mastodon.social/@freemankevin
+    - icon: fontawesome/solid/envelope
+      link: mailto:freemankevin2017@gmail.com
+
+nav:
+  - Home: index.md
+  - Kubernetes: 
+    - Init Node: kubernetes/Init-Node.md
+    - Install LB: kubernetes/Init-LB.md
+    - Install Etcd Cluster: kubernetes/Install-ETCD-Cluster.md
+    - Install TLS Harbor: kubernetes/Install-TLS-Harbor.md
+    - Init k8s Cluster Env: kubernetes/Init-k8s-Cluster-Env.md
+    - Install k8s Cluster: kubernetes/Install-k8s-Cluster.md
+    - Install NFS StorageClass: kubernetes/Install-NFS-StorageClass.md
+
+  - Helm:
+    - Install TLS Traefik: helm/Install-TLS-Traefik.md
+    - Install TLS ArgoCD: helm/Install-TLS-ArgoCD.md
+    - Install KubeSphere: helm/Install-KubeSphere.md
+    - Install Grafana: helm/Install-Grafana.md
+    - Install INGRESS NGINX: helm/Install-INGRESS-NGINX.md
+    - Install Runner IN Kubernetes: helm/Install-Runner-IN-Kubernetes.md
+    - Install Nebula: helm/Install-Nebula.md
+    - Install Openelb: helm/Install-Openelb.md
+    - Install Velero: helm/Install-Velero.md
+    - Install Consul: helm/Install-Consul.md
+    - Install Prometheus: helm/Install-Prometheus.md
+    - Install Rabbitmq Cluster: helm/Install-Rabbitmq-Cluster.md
+    - Install Dashboard: helm/Install-Dashboard.md
+  
+  - Docker:
+    - Docker: docker/Docker.md
+    - Install Jar Services: docker/Install-Jar-Services.md
+    - Install Runner: docker/Install-Runner.md
+    - Install KubeSphere Proxy: docker/Install-KubeSphere-Proxy.md
+    - Install Nexus: docker/Install-Nexus.md
+    - Install Minio: docker/Install-Minio.md
+    - Install Nacos: docker/Install-Nacos.md
+    - Install kkFileview: docker/Install-kkFileview.md
+    - Install Rabbitmq: docker/Install-Rabbitmq.md
+    - Install Redis: docker/Install-Redis.md
+    - Install Consul: docker/Install-Consul.md
+    - Install Gitlab: docker/Install-Gitlab.md
+    - Install Openresty: docker/Install-Openresty.md
+    - Install Postgresql: docker/Install-Postgresql.md
+    - Install Skywalking: docker/Install-Skywalking.md
+    - Install Elasticsearch: docker/Install-Elasticsearch.md
+    - Install Harbor: docker/Install-Harbor.md
+    - Install Export: docker/Install-Export.md
+    - Install Prometheus: docker/Install-Prometheus.md
+    - Install Minio Cluster: docker/Install-Minio-Cluster.md
+    - Install Nginx Cluster: docker/Install-Nginx-Cluster.md
+    - Install Redis Cluster: docker/Install-Redis-Cluster.md
+    - Install Postgresql Cluster: docker/Install-Postgresql-Cluster.md
+    - Install Nacos Cluster: docker/Install-Nacos-Cluster.md
+    - Install Elastic Cluster: docker/Install-Elastic-Cluster.md
+
+  - Linux:
+    - RPM: linux/RPM.md
+    - NFS: linux/NFS.md
+    - Vim: linux/Vim.md
+    - Deepin: linux/Deepin.md
+    - Kylin: linux/Kylin.md
+    - Debian: linux/Debian.md
+    - Ubuntu: linux/Ubuntu.md
+    - Optimize kernel: linux/Optimize-kernel.md
+    - Debian offline package: linux/Debian-offline-package.md
+    - Redhat offline package: linux/Redhat-offline-package.md
+  
+  - CICD:
+    - Jenkins Pipeline: cicd/Jenkins-Pipeline.md
+    - Gitlab Pipeline: cicd/Gitlab-Pipeline.md
