@@ -538,9 +538,9 @@ spec:
     - name: CI_COMMIT_TIMESTAMP
       value: "2024-01-17T15:46:34+08:00"
     - name: CI_COMMIT_AUTHOR
-      value: freemankevin <172563297@qq.com>
+      value: xxxxxxxxx <xxxxxxxxx>
     - name: CI_BUILD_REF
-      value: 96e25221890613845bc2a6a14de49add95090248
+      value: 96e25221890613845bc2a6a14de49add95090xxxx
     - name: CI_BUILD_BEFORE_SHA
       value: a71843f930b1a993cc56dca99d1de51418ca3600
     - name: CI_BUILD_REF_NAME
