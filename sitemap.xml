@@ -6,6 +6,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://github.com/freemankevin/cloudops-handbook/blog/</loc>
+         <lastmod>2024-02-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/cicd/Gitlab-Pipeline/</loc>
          <lastmod>2024-02-26</lastmod>
          <changefreq>daily</changefreq>
