@@ -67,9 +67,6 @@ theme:
 repo_url: 'https://github.com/freemankevin/CloudOps-Handbook'
 repo_name: 'GitHub'
 
-
-<<<<<<< HEAD
-
 plugins:
   - blog:
       blog_dir: blog
@@ -79,21 +76,11 @@ plugins:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - minify:
       minify_html: true
-=======
-plugins:
-  - search
-  - minify:
-      minify_html: true
-      minify_js: true
-      minify_css: true
-  - git-authors
->>>>>>> ab19ad6551aae1b6de74c68978fec887e918211b
   - git-revision-date-localized:
       type: date
       enable_creation_date: true
   - mermaid2
-<<<<<<< HEAD
-
+  
 hooks:
   - material/overrides/hooks/shortcodes.py
   - material/overrides/hooks/translations.py
@@ -148,13 +135,6 @@ markdown_extensions:
       custom_checkbox: true
   - pymdownx.tilde
 
-=======
-markdown_extensions:
-  - admonition
-  - codehilite
-  - toc:
-      permalink: true
->>>>>>> ab19ad6551aae1b6de74c68978fec887e918211b
 
 copyright: Copyright &copy; 2020 - 2024 Freeman Kevin
 
