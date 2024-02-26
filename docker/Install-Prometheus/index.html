@@ -1,0 +1,1384 @@
+<!doctype html><html lang=en class=no-js> <head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Compile cloud native operation and maintenance related operation  and maintenance experience documents"><meta name=author content="Freeman Kevin"><link href=https://github.com/freemankevin/cloudops-handbook/docker/Install-Prometheus/ rel=canonical><link href=../Install-Export/ rel=prev><link href=../Install-Minio-Cluster/ rel=next><link rel=icon href=../../assets/favicon.png><meta name=generator content="mkdocs-1.5.3, mkdocs-material-9.5.11"><title>Install Prometheus - CloudOps Handbook</title><link rel=stylesheet href=../../assets/stylesheets/main.7e359304.min.css><link rel=stylesheet href=../../assets/stylesheets/palette.06af60db.min.css><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback"><style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style><script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script><link rel=stylesheet href=../../assets/stylesheets/custom.00c04c01.min.css></head> <body dir=ltr data-md-color-scheme=default data-md-color-primary=indigo data-md-color-accent=indigo> <input class=md-toggle data-md-toggle=drawer type=checkbox id=__drawer autocomplete=off> <input class=md-toggle data-md-toggle=search type=checkbox id=__search autocomplete=off> <label class=md-overlay for=__drawer></label> <div data-md-component=skip> <a href=#compose-file class=md-skip> Skip to content </a> </div> <div data-md-component=announce> <aside class=md-banner> <div class="md-banner__inner md-grid md-typeset"> <button class="md-banner__button md-icon" aria-label="Don't show this again"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg> </button> For updates follow <strong>@freemankevin</strong> on <a rel=me href=https://mastodon.social/@freemankevin> <span class="twemoji mastodon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M433 179.11c0-97.2-63.71-125.7-63.71-125.7-62.52-28.7-228.56-28.4-290.48 0 0 0-63.72 28.5-63.72 125.7 0 115.7-6.6 259.4 105.63 289.1 40.51 10.7 75.32 13 103.33 11.4 50.81-2.8 79.32-18.1 79.32-18.1l-1.7-36.9s-36.31 11.4-77.12 10.1c-40.41-1.4-83-4.4-89.63-54a102.54 102.54 0 0 1-.9-13.9c85.63 20.9 158.65 9.1 178.75 6.7 56.12-6.7 105-41.3 111.23-72.9 9.8-49.8 9-121.5 9-121.5zm-75.12 125.2h-46.63v-114.2c0-49.7-64-51.6-64 6.9v62.5h-46.33V197c0-58.5-64-56.6-64-6.9v114.2H90.19c0-122.1-5.2-147.9 18.41-175 25.9-28.9 79.82-30.8 103.83 6.1l11.6 19.5 11.6-19.5c24.11-37.1 78.12-34.8 103.83-6.1 23.71 27.3 18.4 53 18.4 175z"/></svg> </span> <strong>Mastodon</strong> </a> and <a href=https://github.com/freemankevin> <span class="twemoji github"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 496 512"><!-- Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg> </span> <strong>github</strong> </a> </div> <script>var content,el=document.querySelector("[data-md-component=announce]");el&&(content=el.querySelector(".md-typeset"),__md_hash(content.innerHTML)===__md_get("__announce")&&(el.hidden=!0))</script> </aside> </div> <header class=md-header data-md-component=header> <nav class="md-header__inner md-grid" aria-label=Header> <a href=../.. title="CloudOps Handbook" class="md-header__button md-logo" aria-label="CloudOps Handbook" data-md-component=logo> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 89 89"> <path d=M3.136,17.387l0,42.932l42.932,21.467l-42.932,-64.399Z /> <path d=M21.91,8l42.933,64.398l-18.775,9.388l-42.932,-64.399l18.774,-9.387Z style="fill-opacity: 0.5"/> <path d=M67.535,17.387l-27.262,18.156l21.878,32.818l5.384,2.691l0,-53.665Z /> <path d=M67.535,17.387l0,53.666l18.774,-9.388l0,-53.665l-18.774,9.387Z style="fill-opacity: 0.25"/> </svg> </a> <label class="md-header__button md-icon" for=__drawer> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg> </label> <div class=md-header__title data-md-component=header-title> <div class=md-header__ellipsis> <div class=md-header__topic> <span class=md-ellipsis> CloudOps Handbook </span> </div> <div class=md-header__topic data-md-component=header-topic> <span class=md-ellipsis> Install Prometheus </span> </div> </div> </div> <form class=md-header__option data-md-component=palette> <input class=md-option data-md-color-media=(prefers-color-scheme) data-md-color-scheme=default data-md-color-primary=indigo data-md-color-accent=indigo aria-label="Switch to light mode" type=radio name=__palette id=__palette_0> <label class="md-header__button md-icon" title="Switch to light mode" for=__palette_1 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8v2m9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1 0 1.71-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 5-5 5 5 0 0 0-5-5Z"/></svg> </label> <input class=md-option data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme=default data-md-color-primary=indigo data-md-color-accent=indigo aria-label="Switch to dark mode" type=radio name=__palette id=__palette_1> <label class="md-header__button md-icon" title="Switch to dark mode" for=__palette_2 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg> </label> <input class=md-option data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme=slate data-md-color-primary=black data-md-color-accent=indigo aria-label="Switch to system preference" type=radio name=__palette id=__palette_2> <label class="md-header__button md-icon" title="Switch to system preference" for=__palette_0 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5M7 15a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg> </label> </form> <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script> <label class="md-header__button md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg> </label> <div class=md-search data-md-component=search role=dialog> <label class=md-search__overlay for=__search></label> <div class=md-search__inner role=search> <form class=md-search__form name=search> <input type=text class=md-search__input name=query aria-label=Search placeholder=Search autocapitalize=off autocorrect=off autocomplete=off spellcheck=false data-md-component=search-query required> <label class="md-search__icon md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg> </label> <nav class=md-search__options aria-label=Search> <a href=javascript:void(0) class="md-search__icon md-icon" title=Share aria-label=Share data-clipboard data-clipboard-text data-md-component=search-share tabindex=-1> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg> </a> <button type=reset class="md-search__icon md-icon" title=Clear aria-label=Clear tabindex=-1> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg> </button> </nav> <div class=md-search__suggest data-md-component=search-suggest></div> </form> <div class=md-search__output> <div class=md-search__scrollwrap data-md-scrollfix> <div class=md-search-result data-md-component=search-result> <div class=md-search-result__meta> Initializing search </div> <ol class=md-search-result__list role=presentation></ol> </div> </div> </div> </div> </div> <div class=md-header__source> <a href=https://github.com/freemankevin/CloudOps-Handbook title="Go to repository" class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg> </div> <div class=md-source__repository> GitHub </div> </a> </div> </nav> </header> <div class=md-container data-md-component=container> <nav class=md-tabs aria-label=Tabs data-md-component=tabs> <div class=md-grid> <ul class=md-tabs__list> <li class=md-tabs__item> <a href=../.. class=md-tabs__link> Home </a> </li> <li class=md-tabs__item> <a href=../../kubernetes/Init-Node/ class=md-tabs__link> Kubernetes </a> </li> <li class=md-tabs__item> <a href=../../helm/Install-TLS-Traefik/ class=md-tabs__link> Helm </a> </li> <li class="md-tabs__item md-tabs__item--active"> <a href=../Docker/ class=md-tabs__link> Docker </a> </li> <li class=md-tabs__item> <a href=../../linux/RPM/ class=md-tabs__link> Linux </a> </li> <li class=md-tabs__item> <a href=../../cicd/Jenkins-Pipeline/ class=md-tabs__link> CICD </a> </li> </ul> </div> </nav> <main class=md-main data-md-component=main> <div class="md-main__inner md-grid"> <div class="md-sidebar md-sidebar--primary" data-md-component=sidebar data-md-type=navigation> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--primary md-nav--lifted" aria-label=Navigation data-md-level=0> <label class=md-nav__title for=__drawer> <a href=../.. title="CloudOps Handbook" class="md-nav__button md-logo" aria-label="CloudOps Handbook" data-md-component=logo> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 89 89"> <path d=M3.136,17.387l0,42.932l42.932,21.467l-42.932,-64.399Z /> <path d=M21.91,8l42.933,64.398l-18.775,9.388l-42.932,-64.399l18.774,-9.387Z style="fill-opacity: 0.5"/> <path d=M67.535,17.387l-27.262,18.156l21.878,32.818l5.384,2.691l0,-53.665Z /> <path d=M67.535,17.387l0,53.666l18.774,-9.388l0,-53.665l-18.774,9.387Z style="fill-opacity: 0.25"/> </svg> </a> CloudOps Handbook </label> <div class=md-nav__source> <a href=https://github.com/freemankevin/CloudOps-Handbook title="Go to repository" class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg> </div> <div class=md-source__repository> GitHub </div> </a> </div> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../.. class=md-nav__link> <span class=md-ellipsis> Home </span> </a> </li> <li class="md-nav__item md-nav__item--pruned md-nav__item--nested"> <a href=../../kubernetes/Init-Node/ class=md-nav__link> <span class=md-ellipsis> Kubernetes </span> <span class="md-nav__icon md-icon"></span> </a> </li> <li class="md-nav__item md-nav__item--pruned md-nav__item--nested"> <a href=../../helm/Install-TLS-Traefik/ class=md-nav__link> <span class=md-ellipsis> Helm </span> <span class="md-nav__icon md-icon"></span> </a> </li> <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_4 checked> <label class=md-nav__link for=__nav_4 id=__nav_4_label tabindex> <span class=md-ellipsis> Docker </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_4_label aria-expanded=true> <label class=md-nav__title for=__nav_4> <span class="md-nav__icon md-icon"></span> Docker </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../Docker/ class=md-nav__link> <span class=md-ellipsis> Docker </span> </a> </li> <li class=md-nav__item> <a href=../Install-Jar-Services/ class=md-nav__link> <span class=md-ellipsis> Install Jar Services </span> </a> </li> <li class=md-nav__item> <a href=../Install-Runner/ class=md-nav__link> <span class=md-ellipsis> Install Runner </span> </a> </li> <li class=md-nav__item> <a href=../Install-KubeSphere-Proxy/ class=md-nav__link> <span class=md-ellipsis> Install KubeSphere Proxy </span> </a> </li> <li class=md-nav__item> <a href=../Install-Nexus/ class=md-nav__link> <span class=md-ellipsis> Install Nexus </span> </a> </li> <li class=md-nav__item> <a href=../Install-Minio/ class=md-nav__link> <span class=md-ellipsis> Install Minio </span> </a> </li> <li class=md-nav__item> <a href=../Install-Nacos/ class=md-nav__link> <span class=md-ellipsis> Install Nacos </span> </a> </li> <li class=md-nav__item> <a href=../Install-kkFileview/ class=md-nav__link> <span class=md-ellipsis> Install kkFileview </span> </a> </li> <li class=md-nav__item> <a href=../Install-Rabbitmq/ class=md-nav__link> <span class=md-ellipsis> Install Rabbitmq </span> </a> </li> <li class=md-nav__item> <a href=../Install-Redis/ class=md-nav__link> <span class=md-ellipsis> Install Redis </span> </a> </li> <li class=md-nav__item> <a href=../Install-Consul/ class=md-nav__link> <span class=md-ellipsis> Install Consul </span> </a> </li> <li class=md-nav__item> <a href=../Install-Gitlab/ class=md-nav__link> <span class=md-ellipsis> Install Gitlab </span> </a> </li> <li class=md-nav__item> <a href=../Install-Openresty/ class=md-nav__link> <span class=md-ellipsis> Install Openresty </span> </a> </li> <li class=md-nav__item> <a href=../Install-Postgresql/ class=md-nav__link> <span class=md-ellipsis> Install Postgresql </span> </a> </li> <li class=md-nav__item> <a href=../Install-Skywalking/ class=md-nav__link> <span class=md-ellipsis> Install Skywalking </span> </a> </li> <li class=md-nav__item> <a href=../Install-Elasticsearch/ class=md-nav__link> <span class=md-ellipsis> Install Elasticsearch </span> </a> </li> <li class=md-nav__item> <a href=../Install-Harbor/ class=md-nav__link> <span class=md-ellipsis> Install Harbor </span> </a> </li> <li class=md-nav__item> <a href=../Install-Export/ class=md-nav__link> <span class=md-ellipsis> Install Export </span> </a> </li> <li class="md-nav__item md-nav__item--active"> <input class="md-nav__toggle md-toggle" type=checkbox id=__toc> <label class="md-nav__link md-nav__link--active" for=__toc> <span class=md-ellipsis> Install Prometheus </span> <span class="md-nav__icon md-icon"></span> </label> <a href=./ class="md-nav__link md-nav__link--active"> <span class=md-ellipsis> Install Prometheus </span> </a> <nav class="md-nav md-nav--secondary" aria-label="Table of contents"> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> Table of contents </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#compose-file class=md-nav__link> <span class=md-ellipsis> Compose file </span> </a> </li> <li class=md-nav__item> <a href=#grafanaini class=md-nav__link> <span class=md-ellipsis> grafana.ini </span> </a> </li> <li class=md-nav__item> <a href=#rules class=md-nav__link> <span class=md-ellipsis> Rules </span> </a> <nav class=md-nav aria-label=Rules> <ul class=md-nav__list> <li class=md-nav__item> <a href=#cpu_usageyaml class=md-nav__link> <span class=md-ellipsis> cpu_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#disk_usageyaml class=md-nav__link> <span class=md-ellipsis> disk_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#memory_usageyaml class=md-nav__link> <span class=md-ellipsis> memory_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#node_disconnectedyaml class=md-nav__link> <span class=md-ellipsis> node_disconnected.yaml </span> </a> </li> <li class=md-nav__item> <a href=#win_cpu_usageyaml class=md-nav__link> <span class=md-ellipsis> win_cpu_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#win_disk_usageyaml class=md-nav__link> <span class=md-ellipsis> win_disk_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#win_memory_usageyaml class=md-nav__link> <span class=md-ellipsis> win_memory_usage.yaml </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#prometheusyaml class=md-nav__link> <span class=md-ellipsis> prometheus.yaml </span> </a> </li> <li class=md-nav__item> <a href=#dingtalk-configyaml class=md-nav__link> <span class=md-ellipsis> dingtalk-config.yaml </span> </a> </li> <li class=md-nav__item> <a href=#alertmanageryaml class=md-nav__link> <span class=md-ellipsis> alertmanager.yaml </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=../Install-Minio-Cluster/ class=md-nav__link> <span class=md-ellipsis> Install Minio Cluster </span> </a> </li> <li class=md-nav__item> <a href=../Install-Nginx-Cluster/ class=md-nav__link> <span class=md-ellipsis> Install Nginx Cluster </span> </a> </li> <li class=md-nav__item> <a href=../Install-Redis-Cluster/ class=md-nav__link> <span class=md-ellipsis> Install Redis Cluster </span> </a> </li> <li class=md-nav__item> <a href=../Install-Postgresql-Cluster/ class=md-nav__link> <span class=md-ellipsis> Install Postgresql Cluster </span> </a> </li> <li class=md-nav__item> <a href=../Install-Nacos-Cluster/ class=md-nav__link> <span class=md-ellipsis> Install Nacos Cluster </span> </a> </li> <li class=md-nav__item> <a href=../Install-Elastic-Cluster/ class=md-nav__link> <span class=md-ellipsis> Install Elastic Cluster </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--pruned md-nav__item--nested"> <a href=../../linux/RPM/ class=md-nav__link> <span class=md-ellipsis> Linux </span> <span class="md-nav__icon md-icon"></span> </a> </li> <li class="md-nav__item md-nav__item--pruned md-nav__item--nested"> <a href=../../cicd/Jenkins-Pipeline/ class=md-nav__link> <span class=md-ellipsis> CICD </span> <span class="md-nav__icon md-icon"></span> </a> </li> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=sidebar data-md-type=toc> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--secondary" aria-label="Table of contents"> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> Table of contents </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#compose-file class=md-nav__link> <span class=md-ellipsis> Compose file </span> </a> </li> <li class=md-nav__item> <a href=#grafanaini class=md-nav__link> <span class=md-ellipsis> grafana.ini </span> </a> </li> <li class=md-nav__item> <a href=#rules class=md-nav__link> <span class=md-ellipsis> Rules </span> </a> <nav class=md-nav aria-label=Rules> <ul class=md-nav__list> <li class=md-nav__item> <a href=#cpu_usageyaml class=md-nav__link> <span class=md-ellipsis> cpu_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#disk_usageyaml class=md-nav__link> <span class=md-ellipsis> disk_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#memory_usageyaml class=md-nav__link> <span class=md-ellipsis> memory_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#node_disconnectedyaml class=md-nav__link> <span class=md-ellipsis> node_disconnected.yaml </span> </a> </li> <li class=md-nav__item> <a href=#win_cpu_usageyaml class=md-nav__link> <span class=md-ellipsis> win_cpu_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#win_disk_usageyaml class=md-nav__link> <span class=md-ellipsis> win_disk_usage.yaml </span> </a> </li> <li class=md-nav__item> <a href=#win_memory_usageyaml class=md-nav__link> <span class=md-ellipsis> win_memory_usage.yaml </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=#prometheusyaml class=md-nav__link> <span class=md-ellipsis> prometheus.yaml </span> </a> </li> <li class=md-nav__item> <a href=#dingtalk-configyaml class=md-nav__link> <span class=md-ellipsis> dingtalk-config.yaml </span> </a> </li> <li class=md-nav__item> <a href=#alertmanageryaml class=md-nav__link> <span class=md-ellipsis> alertmanager.yaml </span> </a> </li> </ul> </nav> </div> </div> </div> <div class=md-content data-md-component=content> <article class="md-content__inner md-typeset"> <a href=https://github.com/freemankevin/CloudOps-Handbook/edit/master/docs/docker/Install-Prometheus.md title="Edit this page" class="md-content__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg> </a> <a href=https://github.com/freemankevin/CloudOps-Handbook/raw/master/docs/docker/Install-Prometheus.md title="View source of this page" class="md-content__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.15 8.15 0 0 1-1.23-2Z"/></svg> </a> <h1>Install Prometheus</h1> <h2 id=compose-file>Compose file<a class=headerlink href=#compose-file title="Permanent link">&para;</a></h2> <div class=codehilite><pre><span></span><code><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=s>&#39;3&#39;</span>
+<span class=nt>services</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>grafana</span><span class=p>:</span>
+<span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">harbor.dockerregistry.com/app/grafana:latest</span>
+<span class=w>    </span><span class=nt>container_name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">grafana</span>
+<span class=w>    </span><span class=nt>user</span><span class=p>:</span><span class=w> </span><span class=s>&quot;${UID}:${GID}&quot;</span>
+<span class=w>    </span><span class=nt>ports</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;3000:3000&quot;</span>
+<span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<span class=w>    </span><span class=nt>volumes</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;./grafana.ini:/etc/grafana/grafana.ini&#39;</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;/data/grafana:/var/lib/grafana&#39;</span>
+
+<span class=w>  </span><span class=nt>grafana-image-renderer</span><span class=p>:</span>
+<span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">harbor.dockerregistry.com/app/grafana/grafana-image-renderer:latest</span>
+<span class=w>    </span><span class=nt>container_name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">grafana-image-renderer</span>
+<span class=w>    </span><span class=c1>#user: &quot;${UID}:${GID}&quot;</span>
+<span class=w>    </span><span class=nt>ports</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;8081:8081&quot;</span>
+<span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<span class=w>    </span><span class=nt>environment</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">BROWSER_TZ=Asia/Shanghai</span>
+
+<span class=w>  </span><span class=nt>prometheus</span><span class=p>:</span>
+<span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">harbor.dockerregistry.com/app/prometheus:v2.34.0</span>
+<span class=w>    </span><span class=nt>container_name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus</span>
+<span class=w>    </span><span class=nt>command</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;--config.file=/opt/prometheus/prometheus.yml&#39;</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;--web.enable-lifecycle&#39;</span>
+<span class=w>    </span><span class=nt>ports</span><span class=p>:</span>
+<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;9090:9090&quot;</span>
+<span class=w>    </span><span class=nt>volumes</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">./prometheus:/opt/prometheus</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">./rules:/etc/prometheus/rules</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">/data/prometheus:/prometheus</span>
+<span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<span class=w>    </span><span class=c1>#privileged: true</span>
+
+<span class=w>  </span><span class=nt>alertmanager</span><span class=p>:</span>
+<span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">harbor.dockerregistry.com/app/prom/alertmanager:latest</span>
+<span class=w>    </span><span class=nt>container_name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">alertmanager</span>
+<span class=w>    </span><span class=nt>hostname</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">alertmanager</span>
+<span class=w>    </span><span class=nt>ports</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;9093:9093&quot;</span>
+<span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<span class=w>    </span><span class=nt>privileged</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class=w>    </span><span class=nt>volumes</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">/etc/localtime:/etc/localtime</span>
+<span class=w>      </span><span class=c1>#- ./alertmanager:/etc/alertmanager</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">/data/alertmanager:/data/alertmanager</span>
+<span class=w>    </span><span class=nt>command</span><span class=p>:</span>
+<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;--config.file=/etc/alertmanager/alertmanager.yml&#39;</span>
+<span class=w>        </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;--storage.path=/data/alertmanager&#39;</span>
+
+<span class=w>  </span><span class=nt>prometheus-webhook-dingtalk</span><span class=p>:</span>
+<span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">harbor.dockerregistry.com/app/timonwong/prometheus-webhook-dingtalk:latest</span>
+<span class=w>    </span><span class=nt>container_name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus-webhook-dingtalk</span>
+<span class=w>    </span><span class=nt>hostname</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus-webhook-dingtalk</span>
+<span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+<span class=w>    </span><span class=nt>volumes</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;/etc/localtime:/etc/localtime&#39;</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;./dingtalk/config.yml:/etc/prometheus-webhook-dingtalk/config.yml&#39;</span>
+<span class=w>    </span><span class=nt>ports</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;8060:8060&quot;</span>
+<span class=w>    </span><span class=nt>command</span><span class=p>:</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;--config.file=/etc/prometheus-webhook-dingtalk/config.yml&#39;</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;--web.enable-ui&#39;</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&#39;--web.enable-lifecycle&#39;</span>
+<span class=w>    </span><span class=nt>entrypoint</span><span class=p>:</span><span class=w> </span><span class=s>&#39;/bin/prometheus-webhook-dingtalk&#39;</span>
+</code></pre></div> <h2 id=grafanaini>grafana.ini<a class=headerlink href=#grafanaini title="Permanent link">&para;</a></h2> <div class=codehilite><pre><span></span><code><span class=c1>##################### Grafana Configuration Example #####################</span>
+<span class=c1>#</span>
+<span class=c1># Everything has defaults so you only need to uncomment things you want to</span>
+<span class=c1># change</span>
+
+<span class=c1># possible values : production, development</span>
+<span class=p>;</span><span class=nv>app_mode</span><span class=w> </span><span class=o>=</span><span class=w> </span>production
+
+<span class=c1># instance name, defaults to HOSTNAME environment variable value or hostname if HOSTNAME var is empty</span>
+<span class=p>;</span><span class=nv>instance_name</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=si>${</span><span class=nv>HOSTNAME</span><span class=si>}</span>
+
+<span class=c1>#################################### Paths ####################################</span>
+<span class=o>[</span>paths<span class=o>]</span>
+<span class=c1># Path to where grafana can store temp files, sessions, and the sqlite3 db (if that is used)</span>
+<span class=p>;</span><span class=nv>data</span><span class=w> </span><span class=o>=</span><span class=w> </span>/var/lib/grafana
+
+<span class=c1># Temporary files in `data` directory older than given duration will be removed</span>
+<span class=p>;</span><span class=nv>temp_data_lifetime</span><span class=w> </span><span class=o>=</span><span class=w> </span>24h
+
+<span class=c1># Directory where grafana can store logs</span>
+<span class=p>;</span><span class=nv>logs</span><span class=w> </span><span class=o>=</span><span class=w> </span>/var/log/grafana
+
+<span class=c1># Directory where grafana will automatically scan and look for plugins</span>
+<span class=p>;</span><span class=nv>plugins</span><span class=w> </span><span class=o>=</span><span class=w> </span>/var/lib/grafana/plugins
+
+<span class=c1># folder that contains provisioning config files that grafana will apply on startup and while running.</span>
+<span class=p>;</span><span class=nv>provisioning</span><span class=w> </span><span class=o>=</span><span class=w> </span>conf/provisioning
+
+<span class=c1>#################################### Server ####################################</span>
+<span class=o>[</span>server<span class=o>]</span>
+<span class=c1># Protocol (http, https, h2, socket)</span>
+<span class=p>;</span><span class=nv>protocol</span><span class=w> </span><span class=o>=</span><span class=w> </span>http
+
+<span class=c1># The ip address to bind to, empty will bind to all interfaces</span>
+<span class=p>;</span><span class=nv>http_addr</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># The http port  to use</span>
+<span class=p>;</span><span class=nv>http_port</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>3000</span>
+
+<span class=c1># The public facing domain name used to access grafana from a browser</span>
+<span class=p>;</span><span class=nv>domain</span><span class=w> </span><span class=o>=</span><span class=w> </span>localhost
+
+<span class=c1># Redirect to correct domain if host header does not match domain</span>
+<span class=c1># Prevents DNS rebinding attacks</span>
+<span class=p>;</span><span class=nv>enforce_domain</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># The full public facing url you use in browser, used for redirects and emails</span>
+<span class=c1># If you use reverse proxy and sub path specify full url (with sub path)</span>
+<span class=p>;</span><span class=nv>root_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>%<span class=o>(</span>protocol<span class=o>)</span>s://%<span class=o>(</span>domain<span class=o>)</span>s:%<span class=o>(</span>http_port<span class=o>)</span>s/
+
+<span class=c1># Serve Grafana from subpath specified in `root_url` setting. By default it is set to `false` for compatibility reasons.</span>
+<span class=p>;</span><span class=nv>serve_from_sub_path</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Log web requests</span>
+<span class=p>;</span><span class=nv>router_logging</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># the path relative working path</span>
+<span class=p>;</span><span class=nv>static_root_path</span><span class=w> </span><span class=o>=</span><span class=w> </span>public
+
+<span class=c1># enable gzip</span>
+<span class=p>;</span><span class=nv>enable_gzip</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># https certs &amp; key file</span>
+<span class=p>;</span><span class=nv>cert_file</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>cert_key</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Unix socket path</span>
+<span class=p>;</span><span class=nv>socket</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># CDN Url</span>
+<span class=p>;</span><span class=nv>cdn_url</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Sets the maximum time using a duration format (5s/5m/5ms) before timing out read of an incoming request and closing idle connections.</span>
+<span class=c1># `0` means there is no timeout for reading the request.</span>
+<span class=p>;</span><span class=nv>read_timeout</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>0</span>
+
+<span class=c1>#################################### Database ####################################</span>
+<span class=o>[</span>database<span class=o>]</span>
+<span class=c1># You can configure the database connection by specifying type, host, name, user and password</span>
+<span class=c1># as separate properties or as on string using the url properties.</span>
+
+<span class=c1># Either &quot;mysql&quot;, &quot;postgres&quot; or &quot;sqlite3&quot;, it&#39;s your choice</span>
+<span class=nb>type</span><span class=w> </span><span class=o>=</span><span class=w> </span>postgres
+<span class=nv>host</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>10</span>.1.1.1:5432
+<span class=nv>name</span><span class=w> </span><span class=o>=</span><span class=w> </span>grafana
+<span class=nv>user</span><span class=w> </span><span class=o>=</span><span class=w> </span>grafana
+<span class=c1># If the password contains # or ; you have to wrap it with triple quotes. Ex &quot;&quot;&quot;#password;&quot;&quot;&quot;</span>
+<span class=nv>password</span><span class=w> </span><span class=o>=</span><span class=w> </span>grafana
+
+<span class=c1># Use either URL or the previous fields to configure the database</span>
+<span class=c1># Example: mysql://user:secret@host:port/database</span>
+<span class=p>;</span><span class=nv>url</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># For &quot;postgres&quot; only, either &quot;disable&quot;, &quot;require&quot; or &quot;verify-full&quot;</span>
+<span class=nv>ssl_mode</span><span class=w> </span><span class=o>=</span><span class=w> </span>disable
+
+<span class=c1># Database drivers may support different transaction isolation levels.</span>
+<span class=c1># Currently, only &quot;mysql&quot; driver supports isolation levels.</span>
+<span class=c1># If the value is empty - driver&#39;s default isolation level is applied.</span>
+<span class=c1># For &quot;mysql&quot; use &quot;READ-UNCOMMITTED&quot;, &quot;READ-COMMITTED&quot;, &quot;REPEATABLE-READ&quot; or &quot;SERIALIZABLE&quot;.</span>
+<span class=p>;</span><span class=nv>isolation_level</span><span class=w> </span><span class=o>=</span>
+
+<span class=p>;</span><span class=nv>ca_cert_path</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>client_key_path</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>client_cert_path</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>server_cert_name</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># For &quot;sqlite3&quot; only, path relative to data_path setting</span>
+<span class=nv>path</span><span class=w> </span><span class=o>=</span><span class=w> </span>grafana.db
+
+<span class=c1># Max idle conn setting default is 2</span>
+<span class=p>;</span><span class=nv>max_idle_conn</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>2</span>
+
+<span class=c1># Max conn setting default is 0 (mean not set)</span>
+<span class=p>;</span><span class=nv>max_open_conn</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Connection Max Lifetime default is 14400 (means 14400 seconds or 4 hours)</span>
+<span class=p>;</span><span class=nv>conn_max_lifetime</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>14400</span>
+
+<span class=c1># Set to true to log the sql calls and execution times.</span>
+<span class=p>;</span><span class=nv>log_queries</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># For &quot;sqlite3&quot; only. cache mode setting used for connecting to the database. (private, shared)</span>
+<span class=p>;</span><span class=nv>cache_mode</span><span class=w> </span><span class=o>=</span><span class=w> </span>private
+
+<span class=c1>################################### Data sources #########################</span>
+<span class=o>[</span>datasources<span class=o>]</span>
+<span class=c1># Upper limit of data sources that Grafana will return. This limit is a temporary configuration and it will be deprecated when pagination will be introduced on the list data sources API.</span>
+<span class=p>;</span><span class=nv>datasource_limit</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>5000</span>
+
+<span class=c1>#################################### Cache server #############################</span>
+<span class=o>[</span>remote_cache<span class=o>]</span>
+<span class=c1># Either &quot;redis&quot;, &quot;memcached&quot; or &quot;database&quot; default is &quot;database&quot;</span>
+<span class=p>;</span><span class=nb>type</span><span class=w> </span><span class=o>=</span><span class=w> </span>database
+
+<span class=c1># cache connectionstring options</span>
+<span class=c1># database: will use Grafana primary database.</span>
+<span class=c1># redis: config like redis server e.g. `addr=127.0.0.1:6379,pool_size=100,db=0,ssl=false`. Only addr is required. ssl may be &#39;true&#39;, &#39;false&#39;, or &#39;insecure&#39;.</span>
+<span class=c1># memcache: 127.0.0.1:11211</span>
+<span class=p>;</span><span class=nv>connstr</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Data proxy ###########################</span>
+<span class=o>[</span>dataproxy<span class=o>]</span>
+
+<span class=c1># This enables data proxy logging, default is false</span>
+<span class=p>;</span><span class=nv>logging</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># How long the data proxy waits to read the headers of the response before timing out, default is 30 seconds.</span>
+<span class=c1># This setting also applies to core backend HTTP data sources where query requests use an HTTP client with timeout set.</span>
+<span class=p>;</span><span class=nv>timeout</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>30</span>
+
+<span class=c1># How long the data proxy waits to establish a TCP connection before timing out, default is 10 seconds.</span>
+<span class=p>;</span><span class=nv>dialTimeout</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>10</span>
+
+<span class=c1># How many seconds the data proxy waits before sending a keepalive probe request.</span>
+<span class=p>;</span><span class=nv>keep_alive_seconds</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>30</span>
+
+<span class=c1># How many seconds the data proxy waits for a successful TLS Handshake before timing out.</span>
+<span class=p>;</span><span class=nv>tls_handshake_timeout_seconds</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>10</span>
+
+<span class=c1># How many seconds the data proxy will wait for a server&#39;s first response headers after</span>
+<span class=c1># fully writing the request headers if the request has an &quot;Expect: 100-continue&quot;</span>
+<span class=c1># header. A value of 0 will result in the body being sent immediately, without</span>
+<span class=c1># waiting for the server to approve.</span>
+<span class=p>;</span><span class=nv>expect_continue_timeout_seconds</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>1</span>
+
+<span class=c1># Optionally limits the total number of connections per host, including connections in the dialing,</span>
+<span class=c1># active, and idle states. On limit violation, dials will block.</span>
+<span class=c1># A value of zero (0) means no limit.</span>
+<span class=p>;</span><span class=nv>max_conns_per_host</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>0</span>
+
+<span class=c1># The maximum number of idle connections that Grafana will keep alive.</span>
+<span class=p>;</span><span class=nv>max_idle_connections</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>100</span>
+
+<span class=c1># The maximum number of idle connections per host that Grafana will keep alive.</span>
+<span class=p>;</span><span class=nv>max_idle_connections_per_host</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>2</span>
+
+<span class=c1># How many seconds the data proxy keeps an idle connection open before timing out.</span>
+<span class=p>;</span><span class=nv>idle_conn_timeout_seconds</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>90</span>
+
+<span class=c1># If enabled and user is not anonymous, data proxy will add X-Grafana-User header with username into the request, default is false.</span>
+<span class=p>;</span><span class=nv>send_user_header</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1>#################################### Analytics ####################################</span>
+<span class=o>[</span>analytics<span class=o>]</span>
+<span class=c1># Server reporting, sends usage counters to stats.grafana.org every 24 hours.</span>
+<span class=c1># No ip addresses are being tracked, only simple counters to track</span>
+<span class=c1># running instances, dashboard and error counts. It is very helpful to us.</span>
+<span class=c1># Change this option to false to disable reporting.</span>
+<span class=p>;</span><span class=nv>reporting_enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># The name of the distributor of the Grafana instance. Ex hosted-grafana, grafana-labs</span>
+<span class=p>;</span><span class=nv>reporting_distributor</span><span class=w> </span><span class=o>=</span><span class=w> </span>grafana-labs
+
+<span class=c1># Set to false to disable all checks to https://grafana.net</span>
+<span class=c1># for new versions (grafana itself and plugins), check is used</span>
+<span class=c1># in some UI views to notify that grafana or plugin update exists</span>
+<span class=c1># This option does not cause any auto updates, nor send any information</span>
+<span class=c1># only a GET request to http://grafana.com to get latest versions</span>
+<span class=p>;</span><span class=nv>check_for_updates</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Google Analytics universal tracking code, only enabled if you specify an id here</span>
+<span class=p>;</span><span class=nv>google_analytics_ua_id</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Google Tag Manager ID, only enabled if you specify an id here</span>
+<span class=p>;</span><span class=nv>google_tag_manager_id</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Security ####################################</span>
+<span class=o>[</span>security<span class=o>]</span>
+<span class=c1># disable creation of admin user on first start of grafana</span>
+<span class=p>;</span><span class=nv>disable_initial_admin_creation</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># default admin user, created on startup</span>
+<span class=p>;</span><span class=nv>admin_user</span><span class=w> </span><span class=o>=</span><span class=w> </span>admin
+
+<span class=c1># default admin password, can be changed before first start of grafana,  or in profile settings</span>
+<span class=p>;</span><span class=nv>admin_password</span><span class=w> </span><span class=o>=</span><span class=w> </span>admin
+
+<span class=c1># used for signing</span>
+<span class=p>;</span><span class=nv>secret_key</span><span class=w> </span><span class=o>=</span><span class=w> </span>SW2YcwTIb9zpOOhoPsMm
+
+<span class=c1># disable gravatar profile images</span>
+<span class=p>;</span><span class=nv>disable_gravatar</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># data source proxy whitelist (ip_or_domain:port separated by spaces)</span>
+<span class=p>;</span><span class=nv>data_source_proxy_whitelist</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># disable protection against brute force login attempts</span>
+<span class=p>;</span><span class=nv>disable_brute_force_login_protection</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># set to true if you host Grafana behind HTTPS. default is false.</span>
+<span class=p>;</span><span class=nv>cookie_secure</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># set cookie SameSite attribute. defaults to `lax`. can be set to &quot;lax&quot;, &quot;strict&quot;, &quot;none&quot; and &quot;disabled&quot;</span>
+<span class=p>;</span><span class=nv>cookie_samesite</span><span class=w> </span><span class=o>=</span><span class=w> </span>lax
+
+<span class=c1># set to true if you want to allow browsers to render Grafana in a &lt;frame&gt;, &lt;iframe&gt;, &lt;embed&gt; or &lt;object&gt;. default is false.</span>
+<span class=nv>allow_embedding</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Set to true if you want to enable http strict transport security (HSTS) response header.</span>
+<span class=c1># This is only sent when HTTPS is enabled in this configuration.</span>
+<span class=c1># HSTS tells browsers that the site should only be accessed using HTTPS.</span>
+<span class=p>;</span><span class=nv>strict_transport_security</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Sets how long a browser should cache HSTS. Only applied if strict_transport_security is enabled.</span>
+<span class=p>;</span><span class=nv>strict_transport_security_max_age_seconds</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>86400</span>
+
+<span class=c1># Set to true if to enable HSTS preloading option. Only applied if strict_transport_security is enabled.</span>
+<span class=p>;</span><span class=nv>strict_transport_security_preload</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Set to true if to enable the HSTS includeSubDomains option. Only applied if strict_transport_security is enabled.</span>
+<span class=p>;</span><span class=nv>strict_transport_security_subdomains</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Set to true to enable the X-Content-Type-Options response header.</span>
+<span class=c1># The X-Content-Type-Options response HTTP header is a marker used by the server to indicate that the MIME types advertised</span>
+<span class=c1># in the Content-Type headers should not be changed and be followed.</span>
+<span class=p>;</span><span class=nv>x_content_type_options</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Set to true to enable the X-XSS-Protection header, which tells browsers to stop pages from loading</span>
+<span class=c1># when they detect reflected cross-site scripting (XSS) attacks.</span>
+<span class=p>;</span><span class=nv>x_xss_protection</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Enable adding the Content-Security-Policy header to your requests.</span>
+<span class=c1># CSP allows to control resources the user agent is allowed to load and helps prevent XSS attacks.</span>
+<span class=p>;</span><span class=nv>content_security_policy</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Set Content Security Policy template used when adding the Content-Security-Policy header to your requests.</span>
+<span class=c1># $NONCE in the template includes a random nonce.</span>
+<span class=c1># $ROOT_PATH is server.root_url without the protocol.</span>
+<span class=p>;</span><span class=nv>content_security_policy_template</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s2>&quot;&quot;&quot;script-src &#39;self&#39; &#39;unsafe-eval&#39; &#39;unsafe-inline&#39; &#39;strict-dynamic&#39; </span><span class=nv>$NONCE</span><span class=s2>;object-src &#39;none&#39;;font-src &#39;self&#39;;style-src &#39;self&#39; &#39;unsafe-inline&#39; blob:;img-src * data:;base-uri &#39;self&#39;;connect-src &#39;self&#39; grafana.com ws://</span><span class=nv>$ROOT_PATH</span><span class=s2> wss://</span><span class=nv>$ROOT_PATH</span><span class=s2>;manifest-src &#39;self&#39;;media-src &#39;none&#39;;form-action &#39;self&#39;;&quot;&quot;&quot;</span>
+
+<span class=c1>#################################### Snapshots ###########################</span>
+<span class=o>[</span>snapshots<span class=o>]</span>
+<span class=c1># snapshot sharing options</span>
+<span class=p>;</span><span class=nv>external_enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>external_snapshot_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://snapshots-origin.raintank.io
+<span class=p>;</span><span class=nv>external_snapshot_name</span><span class=w> </span><span class=o>=</span><span class=w> </span>Publish<span class=w> </span>to<span class=w> </span>snapshot.raintank.io
+
+<span class=c1># Set to true to enable this Grafana instance act as an external snapshot server and allow unauthenticated requests for</span>
+<span class=c1># creating and deleting snapshots.</span>
+<span class=p>;</span><span class=nv>public_mode</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># remove expired snapshot</span>
+<span class=p>;</span><span class=nv>snapshot_remove_expired</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1>#################################### Dashboards History ##################</span>
+<span class=o>[</span>dashboards<span class=o>]</span>
+<span class=c1># Number dashboard versions to keep (per dashboard). Default: 20, Minimum: 1</span>
+<span class=p>;</span><span class=nv>versions_to_keep</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>20</span>
+
+<span class=c1># Minimum dashboard refresh interval. When set, this will restrict users to set the refresh interval of a dashboard lower than given interval. Per default this is 5 seconds.</span>
+<span class=c1># The interval string is a possibly signed sequence of decimal numbers, followed by a unit suffix (ms, s, m, h, d), e.g. 30s or 1m.</span>
+<span class=p>;</span><span class=nv>min_refresh_interval</span><span class=w> </span><span class=o>=</span><span class=w> </span>5s
+
+<span class=c1># Path to the default home dashboard. If this value is empty, then Grafana uses StaticRootPath + &quot;dashboards/home.json&quot;</span>
+<span class=p>;</span><span class=nv>default_home_dashboard_path</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Users ###############################</span>
+<span class=o>[</span>users<span class=o>]</span>
+<span class=c1># disable user signup / registration</span>
+<span class=p>;</span><span class=nv>allow_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Allow non admin users to create organizations</span>
+<span class=p>;</span><span class=nv>allow_org_create</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Set to true to automatically assign new users to the default organization (id 1)</span>
+<span class=p>;</span><span class=nv>auto_assign_org</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Set this value to automatically add new users to the provided organization (if auto_assign_org above is set to true)</span>
+<span class=p>;</span><span class=nv>auto_assign_org_id</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>1</span>
+
+<span class=c1># Default role new users will be automatically assigned (if disabled above is set to true)</span>
+<span class=p>;</span><span class=nv>auto_assign_org_role</span><span class=w> </span><span class=o>=</span><span class=w> </span>Viewer
+
+<span class=c1># Require email validation before sign up completes</span>
+<span class=p>;</span><span class=nv>verify_email_enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Background text for the user field on the login page</span>
+<span class=p>;</span><span class=nv>login_hint</span><span class=w> </span><span class=o>=</span><span class=w> </span>email<span class=w> </span>or<span class=w> </span>username
+<span class=p>;</span><span class=nv>password_hint</span><span class=w> </span><span class=o>=</span><span class=w> </span>password
+
+<span class=c1># Default UI theme (&quot;dark&quot; or &quot;light&quot;)</span>
+<span class=p>;</span><span class=nv>default_theme</span><span class=w> </span><span class=o>=</span><span class=w> </span>dark
+
+<span class=c1># Path to a custom home page. Users are only redirected to this if the default home dashboard is used. It should match a frontend route and contain a leading slash.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>home_page</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># External user management, these options affect the organization users view</span>
+<span class=p>;</span><span class=nv>external_manage_link_url</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>external_manage_link_name</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>external_manage_info</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Viewers can edit/inspect dashboard settings in the browser. But not save the dashboard.</span>
+<span class=p>;</span><span class=nv>viewers_can_edit</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Editors can administrate dashboard, folders and teams they create</span>
+<span class=p>;</span><span class=nv>editors_can_admin</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># The duration in time a user invitation remains valid before expiring. This setting should be expressed as a duration. Examples: 6h (hours), 2d (days), 1w (week). Default is 24h (24 hours). The minimum supported duration is 15m (15 minutes).</span>
+<span class=p>;</span><span class=nv>user_invite_max_lifetime_duration</span><span class=w> </span><span class=o>=</span><span class=w> </span>24h
+
+<span class=c1># Enter a comma-separated list of users login to hide them in the Grafana UI. These users are shown to Grafana admins and themselves.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>hidden_users</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>auth<span class=o>]</span>
+<span class=c1># Login cookie name</span>
+<span class=p>;</span><span class=nv>login_cookie_name</span><span class=w> </span><span class=o>=</span><span class=w> </span>grafana_session
+
+<span class=c1># The maximum lifetime (duration) an authenticated user can be inactive before being required to login at next visit. Default is 7 days (7d). This setting should be expressed as a duration, e.g. 5m (minutes), 6h (hours), 10d (days), 2w (weeks), 1M (month). The lifetime resets at each successful token rotation.</span>
+<span class=p>;</span><span class=nv>login_maximum_inactive_lifetime_duration</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># The maximum lifetime (duration) an authenticated user can be logged in since login time before being required to login. Default is 30 days (30d). This setting should be expressed as a duration, e.g. 5m (minutes), 6h (hours), 10d (days), 2w (weeks), 1M (month).</span>
+<span class=p>;</span><span class=nv>login_maximum_lifetime_duration</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># How often should auth tokens be rotated for authenticated users when being active. The default is each 10 minutes.</span>
+<span class=p>;</span><span class=nv>token_rotation_interval_minutes</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>10</span>
+
+<span class=c1># Set to true to disable (hide) the login form, useful if you use OAuth, defaults to false</span>
+<span class=p>;</span><span class=nv>disable_login_form</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Set to true to disable the sign out link in the side menu. Useful if you use auth.proxy or auth.jwt, defaults to false</span>
+<span class=p>;</span><span class=nv>disable_signout_menu</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># URL to redirect the user to after sign out</span>
+<span class=p>;</span><span class=nv>signout_redirect_url</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Set to true to attempt login with OAuth automatically, skipping the login screen.</span>
+<span class=c1># This setting is ignored if multiple OAuth providers are configured.</span>
+<span class=p>;</span><span class=nv>oauth_auto_login</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># OAuth state max age cookie duration in seconds. Defaults to 600 seconds.</span>
+<span class=p>;</span><span class=nv>oauth_state_cookie_max_age</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>600</span>
+
+<span class=c1># limit of api_key seconds to live before expiration</span>
+<span class=p>;</span><span class=nv>api_key_max_seconds_to_live</span><span class=w> </span><span class=o>=</span><span class=w> </span>-1
+
+<span class=c1># Set to true to enable SigV4 authentication option for HTTP-based datasources.</span>
+<span class=p>;</span><span class=nv>sigv4_auth_enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1>#################################### Anonymous Auth ######################</span>
+<span class=o>[</span>auth.anonymous<span class=o>]</span>
+<span class=c1># enable anonymous access</span>
+<span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># specify organization name that should be used for unauthenticated users</span>
+<span class=p>;</span><span class=nv>org_name</span><span class=w> </span><span class=o>=</span><span class=w> </span>Main<span class=w> </span>Org.
+
+<span class=c1># specify role for unauthenticated users</span>
+<span class=p>;</span><span class=nv>org_role</span><span class=w> </span><span class=o>=</span><span class=w> </span>Viewer
+
+<span class=c1># mask the Grafana version number for unauthenticated users</span>
+<span class=p>;</span><span class=nv>hide_version</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1>#################################### GitHub Auth ##########################</span>
+<span class=o>[</span>auth.github<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>allow_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>client_id</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_id
+<span class=p>;</span><span class=nv>client_secret</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_secret
+<span class=p>;</span><span class=nv>scopes</span><span class=w> </span><span class=o>=</span><span class=w> </span>user:email,read:org
+<span class=p>;</span><span class=nv>auth_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://github.com/login/oauth/authorize
+<span class=p>;</span><span class=nv>token_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://github.com/login/oauth/access_token
+<span class=p>;</span><span class=nv>api_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://api.github.com/user
+<span class=p>;</span><span class=nv>allowed_domains</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>team_ids</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>allowed_organizations</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### GitLab Auth #########################</span>
+<span class=o>[</span>auth.gitlab<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>allow_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>client_id</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_id
+<span class=p>;</span><span class=nv>client_secret</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_secret
+<span class=p>;</span><span class=nv>scopes</span><span class=w> </span><span class=o>=</span><span class=w> </span>api
+<span class=p>;</span><span class=nv>auth_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://gitlab.com/oauth/authorize
+<span class=p>;</span><span class=nv>token_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://gitlab.com/oauth/token
+<span class=p>;</span><span class=nv>api_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://gitlab.com/api/v4
+<span class=p>;</span><span class=nv>allowed_domains</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>allowed_groups</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Google Auth ##########################</span>
+<span class=o>[</span>auth.google<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>allow_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>client_id</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_client_id
+<span class=p>;</span><span class=nv>client_secret</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_client_secret
+<span class=p>;</span><span class=nv>scopes</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://www.googleapis.com/auth/userinfo.profile<span class=w> </span>https://www.googleapis.com/auth/userinfo.email
+<span class=p>;</span><span class=nv>auth_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://accounts.google.com/o/oauth2/auth
+<span class=p>;</span><span class=nv>token_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://accounts.google.com/o/oauth2/token
+<span class=p>;</span><span class=nv>api_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://www.googleapis.com/oauth2/v1/userinfo
+<span class=p>;</span><span class=nv>allowed_domains</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>hosted_domain</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Grafana.com Auth ####################</span>
+<span class=o>[</span>auth.grafana_com<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>allow_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>client_id</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_id
+<span class=p>;</span><span class=nv>client_secret</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_secret
+<span class=p>;</span><span class=nv>scopes</span><span class=w> </span><span class=o>=</span><span class=w> </span>user:email
+<span class=p>;</span><span class=nv>allowed_organizations</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Azure AD OAuth #######################</span>
+<span class=o>[</span>auth.azuread<span class=o>]</span>
+<span class=p>;</span><span class=nv>name</span><span class=w> </span><span class=o>=</span><span class=w> </span>Azure<span class=w> </span>AD
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>allow_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>client_id</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_client_id
+<span class=p>;</span><span class=nv>client_secret</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_client_secret
+<span class=p>;</span><span class=nv>scopes</span><span class=w> </span><span class=o>=</span><span class=w> </span>openid<span class=w> </span>email<span class=w> </span>profile
+<span class=p>;</span><span class=nv>auth_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://login.microsoftonline.com/&lt;tenant-id&gt;/oauth2/v2.0/authorize
+<span class=p>;</span><span class=nv>token_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://login.microsoftonline.com/&lt;tenant-id&gt;/oauth2/v2.0/token
+<span class=p>;</span><span class=nv>allowed_domains</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>allowed_groups</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Okta OAuth #######################</span>
+<span class=o>[</span>auth.okta<span class=o>]</span>
+<span class=p>;</span><span class=nv>name</span><span class=w> </span><span class=o>=</span><span class=w> </span>Okta
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>allow_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>client_id</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_id
+<span class=p>;</span><span class=nv>client_secret</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_secret
+<span class=p>;</span><span class=nv>scopes</span><span class=w> </span><span class=o>=</span><span class=w> </span>openid<span class=w> </span>profile<span class=w> </span>email<span class=w> </span>groups
+<span class=p>;</span><span class=nv>auth_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://&lt;tenant-id&gt;.okta.com/oauth2/v1/authorize
+<span class=p>;</span><span class=nv>token_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://&lt;tenant-id&gt;.okta.com/oauth2/v1/token
+<span class=p>;</span><span class=nv>api_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://&lt;tenant-id&gt;.okta.com/oauth2/v1/userinfo
+<span class=p>;</span><span class=nv>allowed_domains</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>allowed_groups</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>role_attribute_path</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>role_attribute_strict</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1>#################################### Generic OAuth ##########################</span>
+<span class=o>[</span>auth.generic_oauth<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>name</span><span class=w> </span><span class=o>=</span><span class=w> </span>OAuth
+<span class=p>;</span><span class=nv>allow_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>client_id</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_id
+<span class=p>;</span><span class=nv>client_secret</span><span class=w> </span><span class=o>=</span><span class=w> </span>some_secret
+<span class=p>;</span><span class=nv>scopes</span><span class=w> </span><span class=o>=</span><span class=w> </span>user:email,read:org
+<span class=p>;</span><span class=nv>empty_scopes</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>email_attribute_name</span><span class=w> </span><span class=o>=</span><span class=w> </span>email:primary
+<span class=p>;</span><span class=nv>email_attribute_path</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>login_attribute_path</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>name_attribute_path</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>id_token_attribute_name</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>auth_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://foo.bar/login/oauth/authorize
+<span class=p>;</span><span class=nv>token_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://foo.bar/login/oauth/access_token
+<span class=p>;</span><span class=nv>api_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://foo.bar/user
+<span class=p>;</span><span class=nv>allowed_domains</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>team_ids</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>allowed_organizations</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>role_attribute_path</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>role_attribute_strict</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>tls_skip_verify_insecure</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>tls_client_cert</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>tls_client_key</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>tls_client_ca</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Basic Auth ##########################</span>
+<span class=o>[</span>auth.basic<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1>#################################### Auth Proxy ##########################</span>
+<span class=o>[</span>auth.proxy<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>header_name</span><span class=w> </span><span class=o>=</span><span class=w> </span>X-WEBAUTH-USER
+<span class=p>;</span><span class=nv>header_property</span><span class=w> </span><span class=o>=</span><span class=w> </span>username
+<span class=p>;</span><span class=nv>auto_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>sync_ttl</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>60</span>
+<span class=p>;</span><span class=nv>whitelist</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>192</span>.168.1.1,<span class=w> </span><span class=m>192</span>.168.2.1
+<span class=p>;</span><span class=nv>headers</span><span class=w> </span><span class=o>=</span><span class=w> </span>Email:X-User-Email,<span class=w> </span>Name:X-User-Name
+<span class=c1># Read the auth proxy docs for details on what the setting below enables</span>
+<span class=p>;</span><span class=nv>enable_login_token</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1>#################################### Auth JWT ##########################</span>
+<span class=o>[</span>auth.jwt<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=p>;</span><span class=nv>header_name</span><span class=w> </span><span class=o>=</span><span class=w> </span>X-JWT-Assertion
+<span class=p>;</span><span class=nv>email_claim</span><span class=w> </span><span class=o>=</span><span class=w> </span>sub
+<span class=p>;</span><span class=nv>username_claim</span><span class=w> </span><span class=o>=</span><span class=w> </span>sub
+<span class=p>;</span><span class=nv>jwk_set_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://foo.bar/.well-known/jwks.json
+<span class=p>;</span><span class=nv>jwk_set_file</span><span class=w> </span><span class=o>=</span><span class=w> </span>/path/to/jwks.json
+<span class=p>;</span><span class=nv>cache_ttl</span><span class=w> </span><span class=o>=</span><span class=w> </span>60m
+<span class=p>;</span><span class=nv>expected_claims</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=o>{</span><span class=s2>&quot;aud&quot;</span>:<span class=w> </span><span class=o>[</span><span class=s2>&quot;foo&quot;</span>,<span class=w> </span><span class=s2>&quot;bar&quot;</span><span class=o>]}</span>
+<span class=p>;</span><span class=nv>key_file</span><span class=w> </span><span class=o>=</span><span class=w> </span>/path/to/key/file
+
+<span class=c1>#################################### Auth LDAP ##########################</span>
+<span class=o>[</span>auth.ldap<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>config_file</span><span class=w> </span><span class=o>=</span><span class=w> </span>/etc/grafana/ldap.toml
+<span class=p>;</span><span class=nv>allow_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># LDAP background sync (Enterprise only)</span>
+<span class=c1># At 1 am every day</span>
+<span class=p>;</span><span class=nv>sync_cron</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s2>&quot;0 0 1 * * *&quot;</span>
+<span class=p>;</span><span class=nv>active_sync_enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1>#################################### AWS ###########################</span>
+<span class=o>[</span>aws<span class=o>]</span>
+<span class=c1># Enter a comma-separated list of allowed AWS authentication providers.</span>
+<span class=c1># Options are: default (AWS SDK Default), keys (Access &amp;&amp; secret key), credentials (Credentials field), ec2_iam_role (EC2 IAM Role)</span>
+<span class=p>;</span><span class=w> </span><span class=nv>allowed_auth_providers</span><span class=w> </span><span class=o>=</span><span class=w> </span>default,keys,credentials
+
+<span class=c1># Allow AWS users to assume a role using temporary security credentials.</span>
+<span class=c1># If true, assume role will be enabled for all AWS authentication providers that are specified in aws_auth_providers</span>
+<span class=p>;</span><span class=w> </span><span class=nv>assume_role_enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1>#################################### Azure ###############################</span>
+<span class=o>[</span>azure<span class=o>]</span>
+<span class=c1># Azure cloud environment where Grafana is hosted</span>
+<span class=c1># Possible values are AzureCloud, AzureChinaCloud, AzureUSGovernment and AzureGermanCloud</span>
+<span class=c1># Default value is AzureCloud (i.e. public cloud)</span>
+<span class=p>;</span><span class=nv>cloud</span><span class=w> </span><span class=o>=</span><span class=w> </span>AzureCloud
+
+<span class=c1># Specifies whether Grafana hosted in Azure service with Managed Identity configured (e.g. Azure Virtual Machines instance)</span>
+<span class=c1># If enabled, the managed identity can be used for authentication of Grafana in Azure services</span>
+<span class=c1># Disabled by default, needs to be explicitly enabled</span>
+<span class=p>;</span><span class=nv>managed_identity_enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Client ID to use for user-assigned managed identity</span>
+<span class=c1># Should be set for user-assigned identity and should be empty for system-assigned identity</span>
+<span class=p>;</span><span class=nv>managed_identity_client_id</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### SMTP / Emailing ##########################</span>
+<span class=o>[</span>smtp<span class=o>]</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>host</span><span class=w> </span><span class=o>=</span><span class=w> </span>localhost:25
+<span class=p>;</span><span class=nv>user</span><span class=w> </span><span class=o>=</span>
+<span class=c1># If the password contains # or ; you have to wrap it with triple quotes. Ex &quot;&quot;&quot;#password;&quot;&quot;&quot;</span>
+<span class=p>;</span><span class=nv>password</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>cert_file</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>key_file</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>skip_verify</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>from_address</span><span class=w> </span><span class=o>=</span><span class=w> </span>admin@grafana.localhost
+<span class=p>;</span><span class=nv>from_name</span><span class=w> </span><span class=o>=</span><span class=w> </span>Grafana
+<span class=c1># EHLO identity in SMTP dialog (defaults to instance_name)</span>
+<span class=p>;</span><span class=nv>ehlo_identity</span><span class=w> </span><span class=o>=</span><span class=w> </span>dashboard.example.com
+<span class=c1># SMTP startTLS policy (defaults to &#39;OpportunisticStartTLS&#39;)</span>
+<span class=p>;</span><span class=nv>startTLS_policy</span><span class=w> </span><span class=o>=</span><span class=w> </span>NoStartTLS
+
+<span class=o>[</span>emails<span class=o>]</span>
+<span class=p>;</span><span class=nv>welcome_email_on_sign_up</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>templates_pattern</span><span class=w> </span><span class=o>=</span><span class=w> </span>emails/*.html
+
+<span class=c1>#################################### Logging ##########################</span>
+<span class=o>[</span>log<span class=o>]</span>
+<span class=c1># Either &quot;console&quot;, &quot;file&quot;, &quot;syslog&quot;. Default is console and  file</span>
+<span class=c1># Use space to separate multiple modes, e.g. &quot;console file&quot;</span>
+<span class=p>;</span><span class=nv>mode</span><span class=w> </span><span class=o>=</span><span class=w> </span>console<span class=w> </span>file
+
+<span class=c1># Either &quot;debug&quot;, &quot;info&quot;, &quot;warn&quot;, &quot;error&quot;, &quot;critical&quot;, default is &quot;info&quot;</span>
+<span class=p>;</span><span class=nv>level</span><span class=w> </span><span class=o>=</span><span class=w> </span>info
+
+<span class=c1># optional settings to set different levels for specific loggers. Ex filters = sqlstore:debug</span>
+<span class=p>;</span><span class=nv>filters</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># For &quot;console&quot; mode only</span>
+<span class=o>[</span>log.console<span class=o>]</span>
+<span class=p>;</span><span class=nv>level</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># log line format, valid options are text, console and json</span>
+<span class=p>;</span><span class=nv>format</span><span class=w> </span><span class=o>=</span><span class=w> </span>console
+
+<span class=c1># For &quot;file&quot; mode only</span>
+<span class=o>[</span>log.file<span class=o>]</span>
+<span class=p>;</span><span class=nv>level</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># log line format, valid options are text, console and json</span>
+<span class=p>;</span><span class=nv>format</span><span class=w> </span><span class=o>=</span><span class=w> </span>text
+
+<span class=c1># This enables automated log rotate(switch of following options), default is true</span>
+<span class=p>;</span><span class=nv>log_rotate</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Max line number of single file, default is 1000000</span>
+<span class=p>;</span><span class=nv>max_lines</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>1000000</span>
+
+<span class=c1># Max size shift of single file, default is 28 means 1 &lt;&lt; 28, 256MB</span>
+<span class=p>;</span><span class=nv>max_size_shift</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>28</span>
+
+<span class=c1># Segment log daily, default is true</span>
+<span class=p>;</span><span class=nv>daily_rotate</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Expired days of log file(delete after max days), default is 7</span>
+<span class=p>;</span><span class=nv>max_days</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>7</span>
+
+<span class=o>[</span>log.syslog<span class=o>]</span>
+<span class=p>;</span><span class=nv>level</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># log line format, valid options are text, console and json</span>
+<span class=p>;</span><span class=nv>format</span><span class=w> </span><span class=o>=</span><span class=w> </span>text
+
+<span class=c1># Syslog network type and address. This can be udp, tcp, or unix. If left blank, the default unix endpoints will be used.</span>
+<span class=p>;</span><span class=nv>network</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>address</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Syslog facility. user, daemon and local0 through local7 are valid.</span>
+<span class=p>;</span><span class=nv>facility</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Syslog tag. By default, the process&#39; argv[0] is used.</span>
+<span class=p>;</span><span class=nv>tag</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>log.frontend<span class=o>]</span>
+<span class=c1># Should Sentry javascript agent be initialized</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Sentry DSN if you want to send events to Sentry.</span>
+<span class=p>;</span><span class=nv>sentry_dsn</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Custom HTTP endpoint to send events captured by the Sentry agent to. Default will log the events to stdout.</span>
+<span class=p>;</span><span class=nv>custom_endpoint</span><span class=w> </span><span class=o>=</span><span class=w> </span>/log
+
+<span class=c1># Rate of events to be reported between 0 (none) and 1 (all), float</span>
+<span class=p>;</span><span class=nv>sample_rate</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>1</span>.0
+
+<span class=c1># Requests per second limit enforced an extended period, for Grafana backend log ingestion endpoint (/log).</span>
+<span class=p>;</span><span class=nv>log_endpoint_requests_per_second_limit</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>3</span>
+
+<span class=c1># Max requests accepted per short interval of time for Grafana backend log ingestion endpoint (/log).</span>
+<span class=p>;</span><span class=nv>log_endpoint_burst_limit</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>15</span>
+
+<span class=c1>#################################### Usage Quotas ########################</span>
+<span class=o>[</span>quota<span class=o>]</span>
+<span class=p>;</span><span class=w> </span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1>#### set quotas to -1 to make unlimited. ####</span>
+<span class=c1># limit number of users per Org.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>org_user</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>10</span>
+
+<span class=c1># limit number of dashboards per Org.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>org_dashboard</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>100</span>
+
+<span class=c1># limit number of data_sources per Org.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>org_data_source</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>10</span>
+
+<span class=c1># limit number of api_keys per Org.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>org_api_key</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>10</span>
+
+<span class=c1># limit number of alerts per Org.</span>
+<span class=p>;</span><span class=nv>org_alert_rule</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>100</span>
+
+<span class=c1># limit number of orgs a user can create.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>user_org</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>10</span>
+
+<span class=c1># Global limit of users.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>global_user</span><span class=w> </span><span class=o>=</span><span class=w> </span>-1
+
+<span class=c1># global limit of orgs.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>global_org</span><span class=w> </span><span class=o>=</span><span class=w> </span>-1
+
+<span class=c1># global limit of dashboards</span>
+<span class=p>;</span><span class=w> </span><span class=nv>global_dashboard</span><span class=w> </span><span class=o>=</span><span class=w> </span>-1
+
+<span class=c1># global limit of api_keys</span>
+<span class=p>;</span><span class=w> </span><span class=nv>global_api_key</span><span class=w> </span><span class=o>=</span><span class=w> </span>-1
+
+<span class=c1># global limit on number of logged in users.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>global_session</span><span class=w> </span><span class=o>=</span><span class=w> </span>-1
+
+<span class=c1># global limit of alerts</span>
+<span class=p>;</span><span class=nv>global_alert_rule</span><span class=w> </span><span class=o>=</span><span class=w> </span>-1
+
+<span class=c1>#################################### Alerting ############################</span>
+<span class=o>[</span>alerting<span class=o>]</span>
+<span class=c1># Disable alerting engine &amp; UI features</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=c1># Makes it possible to turn off alert rule execution but alerting UI is visible</span>
+<span class=p>;</span><span class=nv>execute_alerts</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1># Default setting for new alert rules. Defaults to categorize error and timeouts as alerting. (alerting, keep_state)</span>
+<span class=p>;</span><span class=nv>error_or_timeout</span><span class=w> </span><span class=o>=</span><span class=w> </span>alerting
+
+<span class=c1># Default setting for how Grafana handles nodata or null values in alerting. (alerting, no_data, keep_state, ok)</span>
+<span class=p>;</span><span class=nv>nodata_or_nullvalues</span><span class=w> </span><span class=o>=</span><span class=w> </span>no_data
+
+<span class=c1># Alert notifications can include images, but rendering many images at the same time can overload the server</span>
+<span class=c1># This limit will protect the server from render overloading and make sure notifications are sent out quickly</span>
+<span class=p>;</span><span class=nv>concurrent_render_limit</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>5</span>
+
+
+<span class=c1># Default setting for alert calculation timeout. Default value is 30</span>
+<span class=p>;</span><span class=nv>evaluation_timeout_seconds</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>30</span>
+
+<span class=c1># Default setting for alert notification timeout. Default value is 30</span>
+<span class=p>;</span><span class=nv>notification_timeout_seconds</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>30</span>
+
+<span class=c1># Default setting for max attempts to sending alert notifications. Default value is 3</span>
+<span class=p>;</span><span class=nv>max_attempts</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>3</span>
+
+<span class=c1># Makes it possible to enforce a minimal interval between evaluations, to reduce load on the backend</span>
+<span class=p>;</span><span class=nv>min_interval_seconds</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>1</span>
+
+<span class=c1># Configures for how long alert annotations are stored. Default is 0, which keeps them forever.</span>
+<span class=c1># This setting should be expressed as a duration. Examples: 6h (hours), 10d (days), 2w (weeks), 1M (month).</span>
+<span class=p>;</span><span class=nv>max_annotation_age</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Configures max number of alert annotations that Grafana stores. Default value is 0, which keeps all alert annotations.</span>
+<span class=p>;</span><span class=nv>max_annotations_to_keep</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Annotations #########################</span>
+<span class=o>[</span>annotations<span class=o>]</span>
+<span class=c1># Configures the batch size for the annotation clean-up job. This setting is used for dashboard, API, and alert annotations.</span>
+<span class=p>;</span><span class=nv>cleanupjob_batchsize</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>100</span>
+
+<span class=o>[</span>annotations.dashboard<span class=o>]</span>
+<span class=c1># Dashboard annotations means that annotations are associated with the dashboard they are created on.</span>
+
+<span class=c1># Configures how long dashboard annotations are stored. Default is 0, which keeps them forever.</span>
+<span class=c1># This setting should be expressed as a duration. Examples: 6h (hours), 10d (days), 2w (weeks), 1M (month).</span>
+<span class=p>;</span><span class=nv>max_age</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Configures max number of dashboard annotations that Grafana stores. Default value is 0, which keeps all dashboard annotations.</span>
+<span class=p>;</span><span class=nv>max_annotations_to_keep</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>annotations.api<span class=o>]</span>
+<span class=c1># API annotations means that the annotations have been created using the API without any</span>
+<span class=c1># association with a dashboard.</span>
+
+<span class=c1># Configures how long Grafana stores API annotations. Default is 0, which keeps them forever.</span>
+<span class=c1># This setting should be expressed as a duration. Examples: 6h (hours), 10d (days), 2w (weeks), 1M (month).</span>
+<span class=p>;</span><span class=nv>max_age</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Configures max number of API annotations that Grafana keeps. Default value is 0, which keeps all API annotations.</span>
+<span class=p>;</span><span class=nv>max_annotations_to_keep</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Explore #############################</span>
+<span class=o>[</span>explore<span class=o>]</span>
+<span class=c1># Enable the Explore section</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+
+<span class=c1>#################################### Internal Grafana Metrics ##########################</span>
+<span class=c1># Metrics available at HTTP API Url /metrics</span>
+<span class=o>[</span>metrics<span class=o>]</span>
+<span class=c1># Disable / Enable internal metrics</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w>           </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+<span class=c1># Graphite Publish interval</span>
+<span class=p>;</span><span class=nv>interval_seconds</span><span class=w>  </span><span class=o>=</span><span class=w> </span><span class=m>10</span>
+<span class=c1># Disable total stats (stat_totals_*) metrics to be generated</span>
+<span class=p>;</span><span class=nv>disable_total_stats</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1>#If both are set, basic auth will be required for the metrics endpoint.</span>
+<span class=p>;</span><span class=w> </span><span class=nv>basic_auth_username</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=w> </span><span class=nv>basic_auth_password</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Metrics environment info adds dimensions to the `grafana_environment_info` metric, which</span>
+<span class=c1># can expose more information about the Grafana instance.</span>
+<span class=o>[</span>metrics.environment_info<span class=o>]</span>
+<span class=c1>#exampleLabel1 = exampleValue1</span>
+<span class=c1>#exampleLabel2 = exampleValue2</span>
+
+<span class=c1># Send internal metrics to Graphite</span>
+<span class=o>[</span>metrics.graphite<span class=o>]</span>
+<span class=c1># Enable by setting the address setting (ex localhost:2003)</span>
+<span class=p>;</span><span class=nv>address</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>prefix</span><span class=w> </span><span class=o>=</span><span class=w> </span>prod.grafana.%<span class=o>(</span>instance_name<span class=o>)</span>s.
+
+<span class=c1>#################################### Grafana.com integration  ##########################</span>
+<span class=c1># Url used to import dashboards directly from Grafana.com</span>
+<span class=o>[</span>grafana_com<span class=o>]</span>
+<span class=p>;</span><span class=nv>url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://grafana.com
+
+<span class=c1>#################################### Distributed tracing ############</span>
+<span class=o>[</span>tracing.jaeger<span class=o>]</span>
+<span class=c1># Enable by setting the address sending traces to jaeger (ex localhost:6831)</span>
+<span class=p>;</span><span class=nv>address</span><span class=w> </span><span class=o>=</span><span class=w> </span>localhost:6831
+<span class=c1># Tag that will always be included in when creating new spans. ex (tag1:value1,tag2:value2)</span>
+<span class=p>;</span><span class=nv>always_included_tag</span><span class=w> </span><span class=o>=</span><span class=w> </span>tag1:value1
+<span class=c1># Type specifies the type of the sampler: const, probabilistic, rateLimiting, or remote</span>
+<span class=p>;</span><span class=nv>sampler_type</span><span class=w> </span><span class=o>=</span><span class=w> </span>const
+<span class=c1># jaeger samplerconfig param</span>
+<span class=c1># for &quot;const&quot; sampler, 0 or 1 for always false/true respectively</span>
+<span class=c1># for &quot;probabilistic&quot; sampler, a probability between 0 and 1</span>
+<span class=c1># for &quot;rateLimiting&quot; sampler, the number of spans per second</span>
+<span class=c1># for &quot;remote&quot; sampler, param is the same as for &quot;probabilistic&quot;</span>
+<span class=c1># and indicates the initial sampling rate before the actual one</span>
+<span class=c1># is received from the mothership</span>
+<span class=p>;</span><span class=nv>sampler_param</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>1</span>
+<span class=c1># sampling_server_url is the URL of a sampling manager providing a sampling strategy.</span>
+<span class=p>;</span><span class=nv>sampling_server_url</span><span class=w> </span><span class=o>=</span>
+<span class=c1># Whether or not to use Zipkin propagation (x-b3- HTTP headers).</span>
+<span class=p>;</span><span class=nv>zipkin_propagation</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=c1># Setting this to true disables shared RPC spans.</span>
+<span class=c1># Not disabling is the most common setting when using Zipkin elsewhere in your infrastructure.</span>
+<span class=p>;</span><span class=nv>disable_shared_zipkin_spans</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1>#################################### External image storage ##########################</span>
+<span class=o>[</span>external_image_storage<span class=o>]</span>
+<span class=c1># Used for uploading images to public servers so they can be included in slack/email messages.</span>
+<span class=c1># you can choose between (s3, webdav, gcs, azure_blob, local)</span>
+<span class=p>;</span><span class=nv>provider</span><span class=w> </span><span class=o>=</span>
+<span class=nv>provider</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>local</span>
+
+<span class=o>[</span>external_image_storage.s3<span class=o>]</span>
+<span class=p>;</span><span class=nv>endpoint</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>path_style_access</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>bucket</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>region</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>path</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>access_key</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>secret_key</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>external_image_storage.webdav<span class=o>]</span>
+<span class=p>;</span><span class=nv>url</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>public_url</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>username</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>password</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>external_image_storage.gcs<span class=o>]</span>
+<span class=p>;</span><span class=nv>key_file</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>bucket</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>path</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>external_image_storage.azure_blob<span class=o>]</span>
+<span class=p>;</span><span class=nv>account_name</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>account_key</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>container_name</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>external_image_storage.local<span class=o>]</span>
+<span class=c1># does not require any configuration</span>
+
+<span class=o>[</span>rendering<span class=o>]</span>
+<span class=c1># Options to configure a remote HTTP image rendering service, e.g. using https://github.com/grafana/grafana-image-renderer.</span>
+<span class=c1># URL to a remote HTTP image renderer service, e.g. http://localhost:8081/render, will enable Grafana to render panels and dashboards to PNG-images using HTTP requests to an external service.</span>
+<span class=p>;</span><span class=nv>server_url</span><span class=w> </span><span class=o>=</span>
+<span class=nv>server_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>http://10.3.1.161:8081/render
+<span class=c1># If the remote HTTP image renderer service runs on a different server than the Grafana server you may have to configure this to a URL where Grafana is reachable, e.g. http://grafana.domain/.</span>
+<span class=p>;</span><span class=nv>callback_url</span><span class=w> </span><span class=o>=</span>
+<span class=nv>callback_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>http://10.3.1.161:3000/
+<span class=c1># Concurrent render request limit affects when the /render HTTP endpoint is used. Rendering many images at the same time can overload the server,</span>
+<span class=c1># which this setting can help protect against by only allowing a certain amount of concurrent requests.</span>
+<span class=p>;</span><span class=nv>concurrent_render_request_limit</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>30</span>
+
+<span class=o>[</span>panels<span class=o>]</span>
+<span class=c1># If set to true Grafana will allow script tags in text panels. Not recommended as it enable XSS vulnerabilities.</span>
+<span class=p>;</span><span class=nv>disable_sanitize_html</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=o>[</span>plugins<span class=o>]</span>
+<span class=p>;</span><span class=nv>enable_alpha</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>app_tls_skip_verify_insecure</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=c1># Enter a comma-separated list of plugin identifiers to identify plugins to load even if they are unsigned. Plugins with modified signatures are never loaded.</span>
+<span class=p>;</span><span class=nv>allow_loading_unsigned_plugins</span><span class=w> </span><span class=o>=</span>
+<span class=c1># Enable or disable installing plugins directly from within Grafana.</span>
+<span class=p>;</span><span class=nv>plugin_admin_enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>plugin_admin_external_manage_enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+<span class=p>;</span><span class=nv>plugin_catalog_url</span><span class=w> </span><span class=o>=</span><span class=w> </span>https://grafana.com/grafana/plugins/
+
+<span class=c1>#################################### Grafana Live ##########################################</span>
+<span class=o>[</span>live<span class=o>]</span>
+<span class=c1># max_connections to Grafana Live WebSocket endpoint per Grafana server instance. See Grafana Live docs</span>
+<span class=c1># if you are planning to make it higher than default 100 since this can require some OS and infrastructure</span>
+<span class=c1># tuning. 0 disables Live, -1 means unlimited connections.</span>
+<span class=p>;</span><span class=nv>max_connections</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=m>100</span>
+
+<span class=c1># allowed_origins is a comma-separated list of origins that can establish connection with Grafana Live.</span>
+<span class=c1># If not set then origin will be matched over root_url. Supports wildcard symbol &quot;*&quot;.</span>
+<span class=p>;</span><span class=nv>allowed_origins</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1>#################################### Grafana Image Renderer Plugin ##########################</span>
+<span class=o>[</span>plugin.grafana-image-renderer<span class=o>]</span>
+<span class=c1># Instruct headless browser instance to use a default timezone when not provided by Grafana, e.g. when rendering panel image of alert.</span>
+<span class=c1># See ICU’s metaZones.txt (https://cs.chromium.org/chromium/src/third_party/icu/source/data/misc/metaZones.txt) for a list of supported</span>
+<span class=c1># timezone IDs. Fallbacks to TZ environment variable if not set.</span>
+<span class=p>;</span><span class=nv>rendering_timezone</span><span class=w> </span><span class=o>=</span>
+<span class=nv>rendering_timezone</span><span class=w> </span><span class=o>=</span><span class=w> </span>Asia/Shanghai
+
+<span class=c1># Instruct headless browser instance to use a default language when not provided by Grafana, e.g. when rendering panel image of alert.</span>
+<span class=c1># Please refer to the HTTP header Accept-Language to understand how to format this value, e.g. &#39;fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5&#39;.</span>
+<span class=p>;</span><span class=nv>rendering_language</span><span class=w> </span><span class=o>=</span>
+<span class=nv>rendering_language</span><span class=w> </span><span class=o>=</span><span class=w> </span>zh-CN,zh<span class=p>;</span><span class=nv>q</span><span class=o>=</span><span class=m>0</span>.9
+
+<span class=c1># Instruct headless browser instance to use a default device scale factor when not provided by Grafana, e.g. when rendering panel image of alert.</span>
+<span class=c1># Default is 1. Using a higher value will produce more detailed images (higher DPI), but will require more disk space to store an image.</span>
+<span class=p>;</span><span class=nv>rendering_viewport_device_scale_factor</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Instruct headless browser instance whether to ignore HTTPS errors during navigation. Per default HTTPS errors are not ignored. Due to</span>
+<span class=c1># the security risk it&#39;s not recommended to ignore HTTPS errors.</span>
+<span class=p>;</span><span class=nv>rendering_ignore_https_errors</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Instruct headless browser instance whether to capture and log verbose information when rendering an image. Default is false and will</span>
+<span class=c1># only capture and log error messages. When enabled, debug messages are captured and logged as well.</span>
+<span class=c1># For the verbose information to be included in the Grafana server log you have to adjust the rendering log level to debug, configure</span>
+<span class=c1># [log].filter = rendering:debug.</span>
+<span class=p>;</span><span class=nv>rendering_verbose_logging</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Instruct headless browser instance whether to output its debug and error messages into running process of remote rendering service.</span>
+<span class=c1># Default is false. This can be useful to enable (true) when troubleshooting.</span>
+<span class=p>;</span><span class=nv>rendering_dumpio</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Additional arguments to pass to the headless browser instance. Default is --no-sandbox. The list of Chromium flags can be found</span>
+<span class=c1># here (https://peter.sh/experiments/chromium-command-line-switches/). Multiple arguments is separated with comma-character.</span>
+<span class=p>;</span><span class=nv>rendering_args</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># You can configure the plugin to use a different browser binary instead of the pre-packaged version of Chromium.</span>
+<span class=c1># Please note that this is not recommended, since you may encounter problems if the installed version of Chrome/Chromium is not</span>
+<span class=c1># compatible with the plugin.</span>
+<span class=p>;</span><span class=nv>rendering_chrome_bin</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Instruct how headless browser instances are created. Default is &#39;default&#39; and will create a new browser instance on each request.</span>
+<span class=c1># Mode &#39;clustered&#39; will make sure that only a maximum of browsers/incognito pages can execute concurrently.</span>
+<span class=c1># Mode &#39;reusable&#39; will have one browser instance and will create a new incognito page on each request.</span>
+<span class=p>;</span><span class=nv>rendering_mode</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># When rendering_mode = clustered you can instruct how many browsers or incognito pages can execute concurrently. Default is &#39;browser&#39;</span>
+<span class=c1># and will cluster using browser instances.</span>
+<span class=c1># Mode &#39;context&#39; will cluster using incognito pages.</span>
+<span class=p>;</span><span class=nv>rendering_clustering_mode</span><span class=w> </span><span class=o>=</span>
+<span class=c1># When rendering_mode = clustered you can define maximum number of browser instances/incognito pages that can execute concurrently..</span>
+<span class=p>;</span><span class=nv>rendering_clustering_max_concurrency</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Limit the maximum viewport width, height and device scale factor that can be requested.</span>
+<span class=p>;</span><span class=nv>rendering_viewport_max_width</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>rendering_viewport_max_height</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>rendering_viewport_max_device_scale_factor</span><span class=w> </span><span class=o>=</span>
+
+<span class=c1># Change the listening host and port of the gRPC server. Default host is 127.0.0.1 and default port is 0 and will automatically assign</span>
+<span class=c1># a port not in use.</span>
+<span class=p>;</span><span class=nv>grpc_host</span><span class=w> </span><span class=o>=</span>
+<span class=p>;</span><span class=nv>grpc_port</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>enterprise<span class=o>]</span>
+<span class=c1># Path to a valid Grafana Enterprise license.jwt file</span>
+<span class=p>;</span><span class=nv>license_path</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>feature_toggles<span class=o>]</span>
+<span class=c1># enable features, separated by spaces</span>
+<span class=p>;</span><span class=nb>enable</span><span class=w> </span><span class=o>=</span>
+
+<span class=o>[</span>date_formats<span class=o>]</span>
+<span class=c1># For information on what formatting patterns that are supported https://momentjs.com/docs/#/displaying/</span>
+
+<span class=c1># Default system date format used in time range picker and other places where full time is displayed</span>
+<span class=p>;</span><span class=nv>full_date</span><span class=w> </span><span class=o>=</span><span class=w> </span>YYYY-MM-DD<span class=w> </span>HH:mm:ss
+
+<span class=c1># Used by graph and other places where we only show small intervals</span>
+<span class=p>;</span><span class=nv>interval_second</span><span class=w> </span><span class=o>=</span><span class=w> </span>HH:mm:ss
+<span class=p>;</span><span class=nv>interval_minute</span><span class=w> </span><span class=o>=</span><span class=w> </span>HH:mm
+<span class=p>;</span><span class=nv>interval_hour</span><span class=w> </span><span class=o>=</span><span class=w> </span>MM/DD<span class=w> </span>HH:mm
+<span class=p>;</span><span class=nv>interval_day</span><span class=w> </span><span class=o>=</span><span class=w> </span>MM/DD
+<span class=p>;</span><span class=nv>interval_month</span><span class=w> </span><span class=o>=</span><span class=w> </span>YYYY-MM
+<span class=p>;</span><span class=nv>interval_year</span><span class=w> </span><span class=o>=</span><span class=w> </span>YYYY
+
+<span class=c1># Experimental feature</span>
+<span class=p>;</span><span class=nv>use_browser_locale</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>false</span>
+
+<span class=c1># Default timezone for user preferences. Options are &#39;browser&#39; for the browser local timezone or a timezone name from IANA Time Zone database, e.g. &#39;UTC&#39; or &#39;Europe/Amsterdam&#39; etc.</span>
+<span class=p>;</span><span class=nv>default_timezone</span><span class=w> </span><span class=o>=</span><span class=w> </span>browser
+
+<span class=o>[</span>expressions<span class=o>]</span>
+<span class=c1># Enable or disable the expressions functionality.</span>
+<span class=p>;</span><span class=nv>enabled</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=nb>true</span>
+</code></pre></div> <h2 id=rules>Rules<a class=headerlink href=#rules title="Permanent link">&para;</a></h2> <h3 id=cpu_usageyaml>cpu_usage.yaml<a class=headerlink href=#cpu_usageyaml title="Permanent link">&para;</a></h3> <div class=codehilite><pre><span></span><code><span class=nt>groups</span><span class=p>:</span>
+<span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">CPU告警规则</span>
+<span class=w>  </span><span class=nt>rules</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>alert</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">CPU使用率</span>
+<span class=w>    </span><span class=nt>expr</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">100 - (avg by (instance)(irate(node_cpu_seconds_total{mode=&quot;idle&quot;}[1m]) )) * 100 &gt; 90</span>
+<span class=w>    </span><span class=nt>for</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">2m</span>
+<span class=w>    </span><span class=nt>labels</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>user</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus</span>
+<span class=w>      </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class=w>    </span><span class=nt>annotations</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s>&quot;服务器CPU使用率超过90%</span><span class=nv> </span><span class=s>(当前:{{</span><span class=nv> </span><span class=s>$value</span><span class=nv> </span><span class=s>}}%)&quot;</span>
+</code></pre></div> <h3 id=disk_usageyaml>disk_usage.yaml<a class=headerlink href=#disk_usageyaml title="Permanent link">&para;</a></h3> <div class=codehilite><pre><span></span><code><span class=nt>groups</span><span class=p>:</span>
+<span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">磁盘告警规则</span>
+<span class=w>  </span><span class=nt>rules</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>alert</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">磁盘使用率</span>
+<span class=w>    </span><span class=nt>expr</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">(node_filesystem_size_bytes - node_filesystem_avail_bytes) / node_filesystem_size_bytes * 100 &gt; 90</span>
+<span class=w>    </span><span class=nt>for</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1m</span>
+<span class=w>    </span><span class=nt>labels</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>user</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus</span>
+<span class=w>      </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class=w>    </span><span class=nt>annotations</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s>&quot;磁盘分区{{</span><span class=nv> </span><span class=s>$labels.mountpoint</span><span class=nv> </span><span class=s>}}空间使用率超过90%</span><span class=nv> </span><span class=s>(当前:</span><span class=nv> </span><span class=s>{{</span><span class=nv> </span><span class=s>$value</span><span class=nv> </span><span class=s>}}%)&quot;</span>
+</code></pre></div> <h3 id=memory_usageyaml>memory_usage.yaml<a class=headerlink href=#memory_usageyaml title="Permanent link">&para;</a></h3> <div class=codehilite><pre><span></span><code><span class=nt>groups</span><span class=p>:</span>
+<span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">内存告警规则</span>
+<span class=w>  </span><span class=nt>rules</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>alert</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">内存使用率</span>
+<span class=w>    </span><span class=nt>expr</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">(node_memory_MemTotal_bytes - (node_memory_MemFree_bytes+node_memory_Buffers_bytes+node_memory_Cached_bytes )) / node_memory_MemTotal_bytes * 100 &gt; 85</span>
+<span class=w>    </span><span class=nt>for</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1m</span>
+<span class=w>    </span><span class=nt>labels</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>user</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus</span>
+<span class=w>      </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class=w>    </span><span class=nt>annotations</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s>&quot;内存使用率超过85%</span><span class=nv> </span><span class=s>(当前:{{</span><span class=nv> </span><span class=s>$value</span><span class=nv> </span><span class=s>}}%)&quot;</span>
+</code></pre></div> <h3 id=node_disconnectedyaml>node_disconnected.yaml<a class=headerlink href=#node_disconnectedyaml title="Permanent link">&para;</a></h3> <div class=codehilite><pre><span></span><code><span class=nt>groups</span><span class=p>:</span>
+<span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">主机告警规则</span>
+<span class=w>  </span><span class=nt>rules</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>alert</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">主机失去联系</span>
+<span class=w>    </span><span class=nt>expr</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">up == 0</span>
+<span class=w>    </span><span class=nt>for</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1m</span>
+<span class=w>    </span><span class=nt>labels</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>user</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus</span>
+<span class=w>      </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">critical</span>
+<span class=w>    </span><span class=nt>annotations</span><span class=p>:</span>
+<span class=w>      </span><span class=c1>#summary: &quot;主机 {{ $labels.instance }} 失联&quot;</span>
+<span class=w>      </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s>&quot;主机</span><span class=nv> </span><span class=s>{{</span><span class=nv> </span><span class=s>$labels.instance</span><span class=nv> </span><span class=s>}}已经失去联系超过1分钟&quot;</span>
+</code></pre></div> <h3 id=win_cpu_usageyaml>win_cpu_usage.yaml<a class=headerlink href=#win_cpu_usageyaml title="Permanent link">&para;</a></h3> <div class=codehilite><pre><span></span><code><span class=nt>groups</span><span class=p>:</span>
+<span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">WIN_CPU告警规则</span>
+<span class=w>  </span><span class=nt>rules</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>alert</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">WIN_CPU使用率</span>
+<span class=w>    </span><span class=nt>expr</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">100 - (avg by (instance,job)(irate(windows_cpu_time_total{mode=&quot;idle&quot;}[2m]) )) * 100 &gt; 90</span>
+<span class=w>    </span><span class=nt>for</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">2m</span>
+<span class=w>    </span><span class=nt>labels</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>user</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus</span>
+<span class=w>      </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class=w>    </span><span class=nt>annotations</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s>&quot;服务器CPU使用率超过90%</span><span class=nv> </span><span class=s>(当前:{{</span><span class=nv> </span><span class=s>$value</span><span class=nv> </span><span class=s>}}%)&quot;</span>
+</code></pre></div> <h3 id=win_disk_usageyaml>win_disk_usage.yaml<a class=headerlink href=#win_disk_usageyaml title="Permanent link">&para;</a></h3> <div class=codehilite><pre><span></span><code><span class=nt>groups</span><span class=p>:</span>
+<span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">WIN_磁盘告警规则</span>
+<span class=w>  </span><span class=nt>rules</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>alert</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">WIN_磁盘使用率</span>
+<span class=w>    </span><span class=nt>expr</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">100 - (avg by (job,volume,instance)(windows_logical_disk_free_bytes / windows_logical_disk_size_bytes))*100 &gt; 90</span>
+<span class=w>    </span><span class=nt>for</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1m</span>
+<span class=w>    </span><span class=nt>labels</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>user</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus</span>
+<span class=w>      </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class=w>    </span><span class=nt>annotations</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s>&quot;磁盘分区{{</span><span class=nv> </span><span class=s>$labels.mountpoint</span><span class=nv> </span><span class=s>}}空间使用率超过90%</span><span class=nv> </span><span class=s>(当前:</span><span class=nv> </span><span class=s>{{</span><span class=nv> </span><span class=s>$value</span><span class=nv> </span><span class=s>}}%)&quot;</span>
+</code></pre></div> <h3 id=win_memory_usageyaml>win_memory_usage.yaml<a class=headerlink href=#win_memory_usageyaml title="Permanent link">&para;</a></h3> <div class=codehilite><pre><span></span><code><span class=nt>groups</span><span class=p>:</span>
+<span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">WIN_内存告警规则</span>
+<span class=w>  </span><span class=nt>rules</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>alert</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">WIN_内存使用率</span>
+<span class=w>    </span><span class=nt>expr</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">100 - (windows_os_physical_memory_free_bytes/ windows_cs_physical_memory_bytes) * 100 &gt; 85</span>
+<span class=w>    </span><span class=nt>for</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1m</span>
+<span class=w>    </span><span class=nt>labels</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>user</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">prometheus</span>
+<span class=w>      </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<span class=w>    </span><span class=nt>annotations</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s>&quot;内存使用率超过85%</span><span class=nv> </span><span class=s>(当前:{{</span><span class=nv> </span><span class=s>$value</span><span class=nv> </span><span class=s>}}%)&quot;</span>
+</code></pre></div> <h2 id=prometheusyaml>prometheus.yaml<a class=headerlink href=#prometheusyaml title="Permanent link">&para;</a></h2> <div class=codehilite><pre><span></span><code><span class=c1># my global config</span>
+<span class=nt>global</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>scrape_interval</span><span class=p>:</span><span class=w>     </span><span class="l l-Scalar l-Scalar-Plain">25s</span><span class=w> </span><span class=c1># Set the scrape interval to every 15 seconds. Default is every 1 minute.</span>
+<span class=w>  </span><span class=nt>evaluation_interval</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">25s</span><span class=w> </span><span class=c1># Evaluate rules every 15 seconds. The default is every 1 minute.</span>
+<span class=w>  </span><span class=c1># scrape_timeout is set to the global default (10s).</span>
+<span class=w>  </span><span class=nt>scrape_timeout</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">20s</span><span class=w> </span>
+
+<span class=c1># Alertmanager configuration</span>
+<span class=nt>alerting</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>alertmanagers</span><span class=p>:</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;10.1.1.1:9093&#39;</span><span class="p p-Indicator">]</span>
+
+<span class=c1># Load rules once and periodically evaluate them according to the global &#39;evaluation_interval&#39;.</span>
+<span class=nt>rule_files</span><span class=p>:</span>
+<span class=w>  </span><span class=c1># - &quot;first_rules.yml&quot;</span>
+<span class=w>  </span><span class=c1># - &quot;second_rules.yml&quot;</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;/etc/prometheus/rules/*.yml&quot;</span>
+
+<span class=c1># A scrape configuration containing exactly one endpoint to scrape:</span>
+<span class=c1># Here it&#39;s Prometheus itself.</span>
+<span class=nt>scrape_configs</span><span class=p>:</span>
+<span class=w>  </span><span class=c1># The job name is added as a label `job=&lt;job_name&gt;` to any timeseries scraped from this config.</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;prometheus&#39;</span>
+
+<span class=w>    </span><span class=c1># metrics_path defaults to &#39;/metrics&#39;</span>
+<span class=w>   </span><span class=c1># scheme defaults to &#39;http&#39;.</span>
+<span class=w>    </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;localhost:9090&#39;</span><span class="p p-Indicator">]</span>
+
+<span class=w>  </span><span class=c1># 监控harbor </span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;harbor-exporter&#39;</span>
+<span class=w>  </span><span class="w w-Error"> </span><span class=nt>scrape_interval</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">20s</span>
+<span class=w>   </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>     </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;10.1.1.1:9090&#39;</span><span class="p p-Indicator">]</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;harbor-core&#39;</span>
+<span class=w>  </span><span class="w w-Error"> </span><span class=nt>scrape_interval</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">20s</span>
+<span class=w>   </span><span class=nt>params</span><span class=p>:</span>
+<span class=w>     </span><span class=nt>comp</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;core&#39;</span><span class="p p-Indicator">]</span>
+<span class=w>   </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>     </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;10.1.1.1:9090&#39;</span><span class="p p-Indicator">]</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;harbor-registry&#39;</span>
+<span class=w>  </span><span class="w w-Error"> </span><span class=nt>scrape_interval</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">20s</span>
+<span class=w>   </span><span class=nt>params</span><span class=p>:</span>
+<span class=w>     </span><span class=nt>comp</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;registry&#39;</span><span class="p p-Indicator">]</span>
+<span class=w>   </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>     </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;10.1.1.1:9090&#39;</span><span class="p p-Indicator">]</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;harbor-jobservice&#39;</span>
+<span class=w>  </span><span class="w w-Error"> </span><span class=nt>scrape_interval</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">20s</span>
+<span class=w>   </span><span class=nt>params</span><span class=p>:</span>
+<span class=w>     </span><span class=nt>comp</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;jobservice&#39;</span><span class="p p-Indicator">]</span>
+<span class=w>   </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>     </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;10.1.1.1:9090&#39;</span><span class="p p-Indicator">]</span>
+
+<span class=w>  </span><span class=c1>#  监控windows主机</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Windows&#39;</span>
+<span class=w>    </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span>
+<span class=w>      </span><span class=c1># dev</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;10.1.1.1:9182&quot;</span>
+
+<span class=w>  </span><span class=c1># 监控linux主机</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Linux&#39;</span>
+<span class=w>    </span><span class=nt>scrape_interval</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">126s</span>
+<span class=w>    </span><span class=nt>scrape_timeout</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">120s</span>
+<span class=w>    </span><span class=nt>static_configs</span><span class=p>:</span><span class=w>   </span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span>
+<span class=w>      </span><span class=c1># test </span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;10.1.1.1:9100&quot;</span>
+
+
+<span class=w>  </span><span class=c1># 监控pgsql     </span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Postgresql&#39;</span>
+<span class=w>    </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span>
+<span class=w>      </span><span class=c1># test</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;10.1.1.1:9187&quot;</span>
+
+<span class=w>  </span><span class=c1># 监控docker容器</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Docker&#39;</span>
+<span class=w>    </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span>
+<span class=w>      </span><span class=c1># dev</span>
+<span class=w>      </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;10.1.1.1:19104&quot;</span>
+
+<span class=w>  </span><span class=c1># 监控JVM</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Java</span><span class=nv> </span><span class=s>JVM&#39;</span>
+<span class=w>  </span><span class="w w-Error"> </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>   </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span>
+<span class=w>     </span><span class="p p-Indicator">-</span><span class=w> </span><span class=s>&quot;10.1.1.1:8080&quot;</span>
+
+<span class=w>  </span><span class=c1># 监控redis</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Redis&#39;</span>
+<span class=w>  </span><span class="w w-Error"> </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>   </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;10.1.1.1:9121&#39;</span><span class="p p-Indicator">]</span>
+
+<span class=w>  </span><span class=c1># 监控Oracle</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Oracle&#39;</span>
+<span class=w>  </span><span class="w w-Error"> </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>   </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;10.1.1.1:9161&#39;</span><span class="p p-Indicator">]</span>
+
+<span class=w>  </span><span class=c1># 监控Rabbitmq</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Rabbitmq&#39;</span>
+<span class=w>    </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;10.1.1.1:15692&#39;</span><span class="p p-Indicator">]</span>
+
+<span class=w>  </span><span class=c1># 监控Minio</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Minio&#39;</span>
+<span class=w>  </span><span class="w w-Error"> </span><span class=nt>bearer_token</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4MTUwMjAwMDMsImlzcyI6InByb21ldGhldXMiLCJzdWIiOiJhZG1pbiJ9.Wv6DHwCq-SNGX861Gd14sYPRSc3CJRHMI3aSxdCUslDFtJbHRF0QxXODAjEASu4YEul55nBYbSGqfMqf8jnvTA</span>
+<span class=w>   </span><span class=nt>metrics_path</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">/minio/v2/metrics/cluster</span>
+<span class=w>   </span><span class=nt>scheme</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class=w>   </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>   </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;10.1.1.1:9000&#39;</span><span class="p p-Indicator">]</span>
+
+<span class=w>  </span><span class=c1># 监控apisix</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>job_name</span><span class=p>:</span><span class=w> </span><span class=s>&quot;apisix&quot;</span>
+<span class=w>  </span><span class="w w-Error"> </span><span class=nt>scrape_interval</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class=w>   </span><span class=nt>metrics_path</span><span class=p>:</span><span class=w> </span><span class=s>&quot;/apisix/prometheus/metrics&quot;</span>
+<span class=w>   </span><span class=nt>static_configs</span><span class=p>:</span>
+<span class=w>     </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>targets</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&quot;10.1.1.1:9091&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div> <h2 id=dingtalk-configyaml>dingtalk-config.yaml<a class=headerlink href=#dingtalk-configyaml title="Permanent link">&para;</a></h2> <div class=codehilite><pre><span></span><code><span class=c1>## Request timeout</span>
+<span class=c1># timeout: 5s</span>
+
+<span class=c1>## Uncomment following line in order to write template from scratch (be careful!)</span>
+<span class=c1>#no_builtin_template: true</span>
+
+<span class=c1>## Customizable templates path</span>
+<span class=c1>#templates:</span>
+<span class=c1>#  - contrib/templates/legacy/template.tmpl</span>
+
+<span class=c1>## You can also override default template using </span>
+<span class=c1>## The following example to use the &#39;legacy&#39; template from v0.3.0</span>
+<span class=c1>#default_message:</span>
+<span class=c1>#  title: &#39;{{ template &quot;legacy.title&quot; . }}&#39;</span>
+<span class=c1>#  text: &#39;{{ template &quot;legacy.content&quot; . }}&#39;</span>
+
+<span class=c1>## Targets, previously was known as &quot;profiles&quot;</span>
+<span class=nt>targets</span><span class=p>:</span>
+<span class=w>  </span><span class=nt>webhook1</span><span class=p>:</span>
+<span class=w>    </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">https://oapi.dingtalk.com/robot/send?access_token=be0e92f1278b3759dcbd98eecf5d93d797b4f82576cac0184a7cae0929bcd5pl</span>
+<span class=w>    </span><span class=c1># secret for signature</span>
+<span class=w>    </span><span class=c1>#secret: SEC8eb3fee1f3cc699b7058a9896c893004afa1d4e7ef0bdf87d87f8e48512aa976</span>
+<span class=w>    </span><span class=nt>secret</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">SEC6eb89ced3853d7232d3d34ea22d5f8bad2d7dfa790cf7d01e4cd0434b9452258</span>
+<span class=w>  </span><span class=c1>#webhook2:</span>
+<span class=w>  </span><span class=c1>#  url: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx</span>
+<span class=w>  </span><span class=c1>#webhook_legacy:</span>
+<span class=w>  </span><span class=c1>#  url: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx</span>
+<span class=w>  </span><span class=c1>#  # Customize template content</span>
+<span class=w>  </span><span class=c1>#  message:</span>
+<span class=w>  </span><span class=c1>#    # Use legacy template</span>
+<span class=w>  </span><span class=c1>#    title: &#39;{{ template &quot;legacy.title&quot; . }}&#39;</span>
+<span class=w>  </span><span class=c1>#    text: &#39;{{ template &quot;legacy.content&quot; . }}&#39;</span>
+<span class=w>  </span><span class=c1>#webhook_mention_all:</span>
+<span class=w>  </span><span class=c1>#  url: https://oapi.dingtalk.com/robot/send?access_token=be0e92f1278b3759dcbd98eecf5d93d797b4f82576cac0184a7cae0929bcd5pl</span>
+<span class=w>  </span><span class=c1>#  mention:</span>
+<span class=w>  </span><span class=c1>#    all: true</span>
+<span class=w>  </span><span class=c1>#webhook_mention_users:</span>
+<span class=w>  </span><span class=c1>#  url: https://oapi.dingtalk.com/robot/send?access_token=be0e92f1278b3759dcbd98eecf5d93d797b4f82576cac0184a7cae0929bcd5pl</span>
+<span class=w>  </span><span class=c1>#  mention:</span>
+<span class=w>  </span><span class=c1>#    #mobiles: [&#39;+86-123456789244&#39;]</span>
+<span class=w>  </span><span class=c1>#    mobiles: [&#39;123456789244&#39;]</span>
+</code></pre></div> <h2 id=alertmanageryaml>alertmanager.yaml<a class=headerlink href=#alertmanageryaml title="Permanent link">&para;</a></h2> <div class=codehilite><pre><span></span><code><span class=c1># 全局配置</span>
+<span class=c1># 定义一些全局的公共参数，如全局的SMTP配置，Slack配置等内容</span>
+<span class=nt>global</span><span class=p>:</span>
+<span class=w>  </span><span class=c1># 定义了当Alertmanager持续多长时间未接收到告警后标记告警状态为resolved（已解决）。该参数的定义可能会影响到告警恢复通知的接收时间，默认5min</span>
+<span class=w>  </span><span class=c1># 每一分钟检查一次是否恢复</span>
+<span class=w>  </span><span class=nt>resolve_timeout</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1m</span>
+<span class=w>  </span><span class=c1># 发件服务器</span>
+<span class=w>  </span><span class=c1># smtp地址需要加端口</span>
+<span class=w>  </span><span class=nt>smtp_smarthost</span><span class=p>:</span><span class=w> </span><span class=s>&#39;smtp.163.com:465&#39;</span>
+<span class=w>  </span><span class=nt>smtp_from</span><span class=p>:</span><span class=w> </span><span class=s>&#39;xxxxxx@163.com&#39;</span>
+<span class=w>  </span><span class=c1># 发件人邮箱账号</span>
+<span class=w>  </span><span class=nt>smtp_auth_username</span><span class=p>:</span><span class=w> </span><span class=s>&#39;xxxxxxx@163.com&#39;</span>
+<span class=w>  </span><span class=c1># 账号对应的授权码（不是密码），QQ邮箱授权码可以在“设置-账户-POP3/SMTP服务”里面找到点击开启</span>
+<span class=w>  </span><span class=nt>smtp_auth_password</span><span class=p>:</span><span class=w> </span><span class=s>&#39;xxxxxxx&#39;</span>
+<span class=w>  </span><span class=nt>smtp_require_tls</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class=c1># 模板</span>
+<span class=c1># 定义告警通知时的模板，如HTML模板，邮件模板等</span>
+<span class=c1>#templates:</span>
+<span class=c1>#  [ - &lt;filepath&gt; ... ]</span>
+
+<span class=c1># 路由</span>
+<span class=c1># 根据标签匹配，确定当前告警应该如何处理</span>
+<span class=c1># 顶级路由</span>
+<span class=nt>route</span><span class=p>:</span>
+<span class=w>  </span><span class=c1># 采用哪个标签来作为分组依据</span>
+<span class=w>  </span><span class=c1># 基于告警中包含的标签，如果满足group_by中定义标签名称，那么这些告警将会合并为一个通知发送给接收器</span>
+<span class=w>  </span><span class=nt>group_by</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;alertname&#39;</span><span class="p p-Indicator">]</span>
+<span class=w>  </span><span class=c1># 默认告警接收人 </span>
+<span class=w>  </span><span class=nt>receiver</span><span class=p>:</span><span class=w> </span><span class=s>&#39;default-receiver&#39;</span>
+<span class=w>  </span><span class=c1># 组告警等待时间</span>
+<span class=w>  </span><span class=c1># 也就是告警产生后等待10s，如果有同组告警一起发出</span>
+<span class=w>  </span><span class=nt>group_wait</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class=w>  </span><span class=c1># 两组告警的间隔时间</span>
+<span class=w>  </span><span class=nt>group_interval</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class=w>  </span><span class=c1># 重复告警的间隔时间，减少相同告警的发送频率</span>
+<span class=w>  </span><span class=nt>repeat_interval</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
+
+<span class=w>  </span><span class=c1># 路由树</span>
+<span class=w>  </span><span class=c1># 根据路由规则将告警信息发送给相应的接收器</span>
+<span class=w>  </span><span class=nt>routes</span><span class=p>:</span>
+<span class=w>    </span><span class=c1># 按照角色(比如系统运维，数据库管理员, SER, Devops)来划分多个接收器</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>receiver</span><span class=p>:</span><span class=w> </span><span class=s>&#39;default-receiver&#39;</span><span class=w>  </span><span class=c1>#告警接收人</span>
+<span class=w>      </span><span class=nt>group_wait</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class=w>      </span><span class=nt>continue</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class=w>      </span><span class=nt>match_re</span><span class=p>:</span>
+<span class=w>        </span><span class=c1>#severity: warning</span>
+<span class=w>        </span><span class=nt>alertname</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">内存使用率|CPU使用率|磁盘使用率|主机失去联系</span>
+
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>receiver</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Devops&#39;</span><span class=w>  </span><span class=c1>#告警接收人</span>
+<span class=w>      </span><span class=nt>group_wait</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class=w>      </span><span class=nt>match_re</span><span class=p>:</span>
+<span class=w>        </span><span class=c1>#service: mysql|cassandra</span>
+<span class=w>        </span><span class=c1>#severity: warning</span>
+<span class=w>        </span><span class=c1>#group_by: [product, environment]</span>
+<span class=w>        </span><span class=nt>alertname</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">内存使用率|CPU使用率|磁盘使用率|主机失去联系</span>
+
+
+<span class=c1># 接收人</span>
+<span class=c1># 接收人是一个抽象的概念，它可以是一个邮箱也可以是微信，Slack或者Webhook等，接收人一般配合告警路由使用</span>
+<span class=nt>receivers</span><span class=p>:</span>
+<span class=w>  </span><span class=c1># 接收器可以关联邮件，Slack以及其它方式接收告警信息。</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;Devops&#39;</span>
+<span class=w>    </span><span class=nt>webhook_configs</span><span class=p>:</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=s>&#39;http://xxxxxxxxxxxx:8060/dingtalk/webhook1/send&#39;</span>
+<span class=w>      </span><span class=c1># 警报被解决之后是否通知</span>
+<span class=w>      </span><span class=nt>send_resolved</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=s>&#39;default-receiver&#39;</span>
+<span class=w>    </span><span class=nt>email_configs</span><span class=p>:</span>
+<span class=w>    </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>to</span><span class=p>:</span><span class=w> </span><span class=s>&#39;xxxxxxx@163.com&#39;</span>
+<span class=w>      </span><span class=nt>send_resolved</span><span class=p>:</span><span class=w> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+
+<span class=c1># 抑制规则</span>
+<span class=c1># 合理设置抑制规则可以减少垃圾告警的产生</span>
+<span class=c1># 当与另一组匹配器的规则匹配时，仅其中一组失效，前提是两个告警组必须有相同的标签</span>
+<span class=nt>inhibit_rules</span><span class=p>:</span>
+<span class=w>  </span><span class=c1># 告警的根本原因</span>
+<span class=w>  </span><span class="p p-Indicator">-</span><span class=w> </span><span class=nt>source_match</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class=s>&#39;critical&#39;</span>
+<span class=w>    </span><span class=c1># 新生告警的触发条件</span>
+<span class=w>    </span><span class=nt>target_match</span><span class=p>:</span>
+<span class=w>      </span><span class=nt>severity</span><span class=p>:</span><span class=w> </span><span class=s>&#39;warning&#39;</span>
+<span class=w>    </span><span class=nt>equal</span><span class=p>:</span><span class=w> </span><span class="p p-Indicator">[</span><span class=s>&#39;alertname&#39;</span><span class="p p-Indicator">,</span><span class=w> </span><span class=s>&#39;dev&#39;</span><span class="p p-Indicator">,</span><span class=w> </span><span class=s>&#39;instance&#39;</span><span class="p p-Indicator">]</span>
+</code></pre></div> <aside class=md-source-file> <span class=md-source-file__fact> <span class=md-icon title="Last update"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 26, 2024</span> </span> <span class=md-source-file__fact> <span class=md-icon title=Created> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3h-2Z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 26, 2024</span> </span> <span class=md-source-file__fact> <span class=md-icon title=Contributors> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4Z"/></svg> </span> <nav> <a href=mailto:172563297@qq.com>freemankevin</a> </nav> </span> </aside> </article> </div> <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script> <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg> Back to top </button> </main> <footer class=md-footer> <nav class="md-footer__inner md-grid" aria-label=Footer> <a href=../Install-Export/ class="md-footer__link md-footer__link--prev" aria-label="Previous: Install Export"> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg> </div> <div class=md-footer__title> <span class=md-footer__direction> Previous </span> <div class=md-ellipsis> Install Export </div> </div> </a> <a href=../Install-Minio-Cluster/ class="md-footer__link md-footer__link--next" aria-label="Next: Install Minio Cluster"> <div class=md-footer__title> <span class=md-footer__direction> Next </span> <div class=md-ellipsis> Install Minio Cluster </div> </div> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg> </div> </a> </nav> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> Copyright &copy; 2020 - 2024 Freeman Kevin </div> Made with <a href=https://squidfunk.github.io/mkdocs-material/ target=_blank rel=noopener> Material for MkDocs </a> </div> <div class=md-social> <a href=https://github.com/freemankevin target=_blank rel=noopener title=github.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 496 512"><!-- Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg> </a> <a href=https://mastodon.social/@freemankevin target=_blank rel="noopener me" title=mastodon.social class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M433 179.11c0-97.2-63.71-125.7-63.71-125.7-62.52-28.7-228.56-28.4-290.48 0 0 0-63.72 28.5-63.72 125.7 0 115.7-6.6 259.4 105.63 289.1 40.51 10.7 75.32 13 103.33 11.4 50.81-2.8 79.32-18.1 79.32-18.1l-1.7-36.9s-36.31 11.4-77.12 10.1c-40.41-1.4-83-4.4-89.63-54a102.54 102.54 0 0 1-.9-13.9c85.63 20.9 158.65 9.1 178.75 6.7 56.12-6.7 105-41.3 111.23-72.9 9.8-49.8 9-121.5 9-121.5zm-75.12 125.2h-46.63v-114.2c0-49.7-64-51.6-64 6.9v62.5h-46.33V197c0-58.5-64-56.6-64-6.9v114.2H90.19c0-122.1-5.2-147.9 18.41-175 25.9-28.9 79.82-30.8 103.83 6.1l11.6 19.5 11.6-19.5c24.11-37.1 78.12-34.8 103.83-6.1 23.71 27.3 18.4 53 18.4 175z"/></svg> </a> <a href=mailto:freemankevin2017@gmail.com target=_blank rel=noopener title class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 512 512"><!-- Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4l217.6 163.2c11.4 8.5 27 8.5 38.4 0l217.6-163.2c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48H48zM0 176v208c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V176L294.4 339.2a63.9 63.9 0 0 1-76.8 0L0 176z"/></svg> </a> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <div class=md-progress data-md-component=progress role=progressbar></div> <script id=__config type=application/json>{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script> <script src=../../assets/javascripts/bundle.8fd75fb4.min.js></script> <script src=../../assets/javascripts/custom.054acff4.min.js></script> </body> </html>
