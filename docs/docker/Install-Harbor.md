@@ -56,14 +56,21 @@ cp myharbor.mydomain.com.cert  /etc/docker/certs.d/myharbor.mydomain.com/
 cp myharbor.mydomain.com.key   /etc/docker/certs.d/myharbor.mydomain.com/
 ```
 
-### 1.4 证书发送到客户端
+### 1.4 更新系统证书
+```shell
+\cp -rvf myharbor.mydomain.com.crt /usr/local/share/ca-certificates/myharbor.mydomain.com.crt 
+update-ca-certificates
+```
+
+### 1.5 证书发送到客户端
 ```shell
 scp -r /etc/docker/certs.d 192.168.171.130:/etc/docker
 scp -r /etc/docker/certs.d 192.168.171.132:/etc/docker
 scp -r /etc/docker/certs.d 192.168.171.133:/etc/docker
+scp -r myharbor.mydomain.com.crt 192.168.171.133:/usr/local/share/ca-certificates/
 ```
 
-### 1.4 Docker 配置
+### 1.6 Docker 配置
 ```shell
 cat > /etc/docker/daemon.json <<-EOF
 {
@@ -88,12 +95,13 @@ cat > /etc/docker/daemon.json <<-EOF
 EOF
 ```
 
-### 1.4 重启docker
+### 1.7 重启docker
 ```shell
 systemctl restart docker
+update-ca-certificates
 ```
 
-### 1.4 登录认证
+### 1.8 登录认证
 ```shell
 $ docker login -u admin -p Harbor12345 myharbor.mydomain.com
 WARNING! Using --password via the CLI is insecure. Use --password-stdin.
