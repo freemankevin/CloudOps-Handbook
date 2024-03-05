@@ -2,302 +2,302 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/blog/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/cicd/Gitlab-Pipeline/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/cicd/Jenkins-Pipeline/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Docker/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Consul/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Elastic-Cluster/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Elasticsearch/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Export/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Gitlab/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Harbor/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Jar-Services/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-KubeSphere-Proxy/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Minio-Cluster/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Minio/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Nacos-Cluster/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Nacos/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Nexus/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Nginx-Cluster/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Openresty/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Postgresql-Cluster/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Postgresql/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Prometheus/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Rabbitmq/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Redis-Cluster/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Redis/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Runner/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-Skywalking/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/docker/Install-kkFileview/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-Consul/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-Dashboard/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-Grafana/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-INGRESS-NGINX/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-KubeSphere/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-Nebula/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-Openelb/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-Prometheus/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-Rabbitmq-Cluster/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-Runner-IN-Kubernetes/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-TLS-ArgoCD/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-TLS-Traefik/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/helm/Install-Velero/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/kubernetes/Init-LB/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/kubernetes/Init-Node/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/kubernetes/Init-k8s-Cluster-Env/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/kubernetes/Install-ETCD-Cluster/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/kubernetes/Install-NFS-StorageClass/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/kubernetes/Install-TLS-Harbor/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/kubernetes/Install-k8s-Cluster/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/Debian-offline-package/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/Debian/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/Deepin/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/Kylin/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/NFS/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/Optimize-kernel/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/RPM/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/Redhat-offline-package/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/Ubuntu/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/Vim/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://github.com/freemankevin/cloudops-handbook/linux/Yum/</loc>
-         <lastmod>2024-03-04</lastmod>
+         <lastmod>2024-03-05</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
